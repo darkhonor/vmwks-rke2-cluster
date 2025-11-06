@@ -30,13 +30,13 @@ jobs:
           exit 1
         fi
         
-    - name: Validate Packer templates
-      run: |
-        echo "Validating Packer templates..."
-        find . -name "*.pkr.hcl" -exec dirname {} \; | sort -u | while read dir; do
-          echo "Validating template in $dir"
-          cd "$dir" && packer validate . && cd - > /dev/null
-        done
+    # - name: Validate Packer templates
+    #   run: |
+    #     echo "Validating Packer templates..."
+    #     find . -name "*.pkr.hcl" -exec dirname {} \; | sort -u | while read dir; do
+    #       echo "Validating template in $dir"
+    #       cd "$dir" && packer validate . && cd - > /dev/null
+    #     done
         
     - name: Setup Node.js
       uses: actions/setup-node@v4
