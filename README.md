@@ -7,6 +7,23 @@ The design follows this workflow:
 RHEL 9.6 ISO → Packer:vmware:vmware-iso Builder →
 Packer:vagrant Post-Processor → Vagrant Box on VMware Workstation Pro
 
+## Directory Structure
+
+- **`.github/`** - Contains GitHub Actions workflows for automated
+  CI/CD processes
+- **`image-rhel/`** - Packer templates and configurations for building RHEL 9.6 images
+- **`rke2-cluster/`** - Vagrant configuration for deploying RKE2 clusters
+- **`AGENTS.md`** - System prompt configuration for development agents
+- **`CHANGELOG`** - Project change history and version updates
+- **`CODEOWNERS`** - Code ownership and review assignment rules
+- **`CONTRIBUTING.md`** - Guidelines for contributing to the project
+- **`LICENSE`** - Project license information
+- **`MARKDOWN-STANDARDS.md`** - Markdown formatting standards for documentation
+- **`.gitignore`** - Git ignore patterns for the project
+- **`.markdownlint.json`** - Configuration for markdown linting rules
+- **`.yamllint`** - Configuration for YAML linting rules
+- **`format-markdown.sh`** - Script to format and lint Markdown files
+
 ## Dependencies
 
 The following dependencies are **required** before you use this build:
@@ -64,13 +81,27 @@ cd image-rhel
 
 ## Documentation Standards
 
-This project follows strict Markdown formatting standards for
-GitHub/GitLab CE publication. See
-[MARKDOWN-STANDARDS.md](MARKDOWN-STANDARDS.md) for detailed guidelines.
+This project follows strict formatting standards for all file types:
 
-To format documentation before committing:
+- **Markdown**: 120 character line limit, proper heading structure
+- **HCL**: HashiCorp Packer formatting standards using `packer fmt`
+- **YAML**: Consistent indentation and structure validation
+
+See [MARKDOWN-STANDARDS.md](MARKDOWN-STANDARDS.md) for detailed guidelines.
+
+To format all files before committing:
 
 ```bash
+./format.sh
+```
+
+To format specific file types:
+
+```bash
+# HCL files only
+packer fmt .
+
+# Markdown files only
 ./format-markdown.sh
 ```
 

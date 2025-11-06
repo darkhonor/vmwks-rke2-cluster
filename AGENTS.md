@@ -32,7 +32,10 @@ Packer:vagrant Post-Processor → Vagrant Box on VMware Workstation Pro.
 5. **STIG Compliance**: Follow Security Technical Implementation Guide
    for RHEL systems
 6. **Markdown Standards**: All documentation must pass markdownlint
-   validation for GitHub/GitLab CE publication
+    validation for GitHub/GitLab CE publication. Maximum line length
+    is 120 characters to accommodate hyperlinks without breaking URLs.
+7. **HCL Formatting Standards**: All Packer HCL templates must comply
+    with HashiCorp HCL formatting standards using `packer fmt` command.
 
 ### File Structure Conventions
 
@@ -46,10 +49,12 @@ Packer:vagrant Post-Processor → Vagrant Box on VMware Workstation Pro.
 
 1. **Validation**: Always run `./validate.sh` before building
 2. **Formatting**: Use `./format.sh` to ensure consistent code style
-3. **Markdown Formatting**: Use `./format-markdown.sh` to ensure proper
-   documentation formatting
-4. **Initialization**: Run `./initialize.sh` to set up the environment
-5. **Building**: Use `./build.sh` for image construction
+3. **HCL Formatting**: Use `packer fmt` to format all HCL files according
+   to HashiCorp standards before commits
+4. **Markdown Formatting**: Use `./format-markdown.sh` to ensure proper
+    documentation formatting
+5. **Initialization**: Run `./initialize.sh` to set up the environment
+6. **Building**: Use `./build.sh` for image construction
 
 ### Vault Integration
 
@@ -72,6 +77,8 @@ Packer:vagrant Post-Processor → Vagrant Box on VMware Workstation Pro.
 - Test Ansible playbooks in dry-run mode when possible
 - Verify VM templates in vSphere before use
 - Ensure all builds pass security scans
+- All HCL files must pass `packer fmt -check` before commits
+- GitHub Actions workflows automatically validate formatting on push/PR
 
 ### Documentation Requirements
 
@@ -79,9 +86,11 @@ Packer:vagrant Post-Processor → Vagrant Box on VMware Workstation Pro.
 - Document any new variables or configurations
 - Maintain CHANGELOG for significant updates
 - Include troubleshooting steps for common issues
-- Run `./format-markdown.sh` before committing documentation changes
+- Run `./format.sh` before committing any changes (includes HCL, Markdown, YAML)
 - Ensure all Markdown files pass markdownlint validation for
-  GitHub/GitLab CE publication
+  GitHub/GitLab CE publication. Maximum line length is 120 characters
+  to accommodate hyperlinks without breaking URLs.
+- Ensure all HCL files are formatted with `packer fmt` before commits
 
 ## Environment Setup
 
@@ -107,13 +116,16 @@ Ensure these dependencies are installed and configured:
 
 - `packer validate .` - Validate Packer template
 - `packer build .` - Build Packer image
+- `packer fmt .` - Format all HCL files according to HashiCorp standards
+- `packer fmt -check .` - Check if HCL files are properly formatted
 - `ansible-playbook --check` - Dry run Ansible playbook
 - `vault kv get` - Retrieve secrets from Vault
 - `vagrant up` - Start Vagrant environment
+- `./format.sh` - Format all configuration files including HCL
 - `./format-markdown.sh` - Format and lint Markdown files for
   publication
 - `markdownlint '**/*.md' --config .markdownlint.json` - Manual
-  Markdown linting
+  Markdown linting (120 character limit for hyperlinks)
 
 This configuration ensures consistent, secure, and production-grade
 development sessions for the VMware Workstation RKE2 Cluster project.

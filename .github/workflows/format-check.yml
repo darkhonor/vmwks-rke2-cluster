@@ -1,0 +1,66 @@
+name: Format Check
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Packer
+      uses: hashicorp/setup-packer@v3
+      with:
+        packer-version: latest
+        
+    - name: Check HCL formatting
+      run: |
+        echo "Checking HCL file formatting..."
+        if packer fmt -check .; then
+          echo "✓ All HCL files are properly formatted"
+        else
+          echo "⚠ HCL files are not properly formatted"
+          echo "Run 'packer fmt .' to fix formatting issues"
+          exit 1
+        fi
+        
+    - name: Validate Packer templates
+      run: |
+        echo "Validating Packer templates..."
+        find . -name "*.pkr.hcl" -exec dirname {} \; | sort -u | while read dir; do
+          echo "Validating template in $dir"
+          cd "$dir" && packer validate . && cd - > /dev/null
+        done
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install markdownlint-cli
+      run: npm install -g markdownlint-cli
+      
+    - name: Check Markdown formatting
+      run: |
+        echo "Checking Markdown formatting..."
+        markdownlint '**/*.md' --config .markdownlint.json
+        
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install yamllint
+      run: |
+        pip install yamllint
+        
+    - name: Check YAML formatting
+      run: |
+        echo "Checking YAML formatting..."
+        find . -name "*.yml" -o -name "*.yaml" | xargs yamllint -c .yamllint

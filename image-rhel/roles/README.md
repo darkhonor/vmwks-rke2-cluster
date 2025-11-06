@@ -4,6 +4,13 @@ This directory contains the Ansible roles used in the Packer builds for
 creating RHEL images. The roles are managed through the `requirements.yml`
 file and are sourced from external repositories.
 
+## Directory Contents
+
+- **`requirements.yml`** - Ansible Galaxy requirements file defining
+  external roles to install
+- **`.gitignore`** - Git ignore patterns for the roles directory
+- **`README.md`** - This documentation file
+
 ## Available Roles
 
 ### dns_client
