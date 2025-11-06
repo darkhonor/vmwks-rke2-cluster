@@ -43,13 +43,19 @@ jobs:
       with:
         node-version: '18'
         
-    - name: Install markdownlint-cli
-      run: npm install -g markdownlint-cli
+    - name: Install markdownlint tools
+      run: |
+        npm install -g markdownlint-cli markdownlint-cli2
       
     - name: Check Markdown formatting
       run: |
-        echo "Checking Markdown formatting..."
+        echo "Checking Markdown formatting with markdownlint-cli..."
         markdownlint '**/*.md' --config .markdownlint.json
+        
+    - name: Check Markdown formatting with markdownlint-cli2
+      run: |
+        echo "Checking Markdown formatting with markdownlint-cli2..."
+        markdownlint-cli2 '**/*.md' --config .markdownlint.json --ignore node_modules
         
     - name: Setup Python
       uses: actions/setup-python@v4

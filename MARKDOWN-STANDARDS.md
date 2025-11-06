@@ -46,7 +46,7 @@ GitHub Actions workflow that automatically:
 1. **Packer**: HashiCorp Packer for HCL formatting and validation
 2. **markdownlint-cli**: Node.js-based linter with auto-fix
    capability
-3. **markdownlint-cli2**: Python-based alternative for additional
+3. **markdownlint-cli2**: Node.js-based alternative for additional
    validation
 4. **yamllint**: Python-based YAML linter for configuration files
 5. **GitHub Actions**: Automated CI/CD pipeline integration
