@@ -1,0 +1,31 @@
+---
+# STIG the Virtual Machine
+# - name: Apply VMware Virtual Machine STIG Settings
+#   become: false
+#   gather_facts: false   # Need to validate OS of system running these
+#   hosts: localhost
+#   roles:
+#     - vmware_vm_stig
+
+# Configure the Guest Operating System
+- name: Apply Baseline Configuration to RHEL Guest
+  become: true
+  become_method: sudo
+  gather_facts: true
+  hosts: all
+  roles:
+    - role: dns_client
+      dns_server_1: 10.110.42.1
+      dns_server_2: 10.110.11.1
+      search_domain: darkhonor.net
+    - role: system_base
+      rhsm_username: '{{ myrhsm_username }}'
+      rhsm_password: '{{ myrhsm_password }}'
+      registered: false
+      connected_network: true
+    # - system_users
+    - system_configure
+    - role: rhel9_stig
+      sudo_remove_nopasswd: false
+      DISA_STIG_RHEL_09_412080: false
+    - system_clean

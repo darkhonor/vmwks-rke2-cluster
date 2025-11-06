@@ -1,0 +1,5 @@
+# Changelog
+
+## 1.0.0 [2025-11-06]
+
+* Initial RHEL 9.6 image built on minimal RHEL 9.6 Kickstart build

@@ -1,0 +1,20 @@
+---
+roles:
+  - name: dns_client
+    src: git@github.com:darkhonor/ansible-role-dns-client.git
+    scm: git
+  - name: firefox_stig
+    src: git@github.com:darkhonor/ansible-role-firefox-stig.git
+    scm: git
+  - name: system_base
+    src: git@github.com:darkhonor/ansible-role-system-base.git
+    scm: git
+  - name: system_clean
+    src: git@github.com:darkhonor/ansible-role-system-clean.git
+    scm: git
+  - name: system_configure
+    src: git@github.com:darkhonor/ansible-role-system-configure.git
+    scm: git
+  - name: system_users
+    src: git@github.com:darkhonor/ansible-role-system-users.git
+    scm: git
