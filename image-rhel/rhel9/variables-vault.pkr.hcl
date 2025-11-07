@@ -25,7 +25,7 @@ variable "vault_address" {
   type        = string
   description = "External Vault cluster address for secrets management"
   default     = "https://vault.kten.mil"
-  
+
   validation {
     condition     = can(regex("^https://", var.vault_address))
     error_message = "[STIG-ID V-257777] Vault address must use HTTPS protocol for FIPS 140-3 compliance"

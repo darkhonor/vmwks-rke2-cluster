@@ -45,12 +45,12 @@ packer {
 //  Defines the local variables.
 
 locals {
-  build_by          = "Built by: HashiCorp Packer ${packer.version}"
-  build_date        = formatdate("YYYY-MM-DD hh:mm ZZZ", timestamp())
-  build_version     = formatdate("YY.MM", timestamp())
-  
+  build_by      = "Built by: HashiCorp Packer ${packer.version}"
+  build_date    = formatdate("YYYY-MM-DD hh:mm ZZZ", timestamp())
+  build_version = formatdate("YY.MM", timestamp())
+
   # [STIG-ID V-257777] [NIST CM-6] Build metadata with compliance information
-  build_description = &lt;&lt;-EOT
+  build_description = <<-EOT
     Red Hat Enterprise Linux 9.6 STIG-Compliant Template
     
     Version: ${local.build_version}
@@ -75,8 +75,8 @@ locals {
     - ansible (automation)
     - nessus (vulnerability scanning)
   EOT
-  
-  iso_paths         = ["[${var.common_iso_datastore}] ${var.iso_path}/${var.iso_file}"]
+
+  iso_paths = ["[${var.common_iso_datastore}] ${var.iso_path}/${var.iso_file}"]
 
   manifest_date   = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
   manifest_path   = "${path.cwd}/manifests/"
@@ -141,10 +141,10 @@ locals {
   data_source_command = var.common_data_source == "http" ? "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg" : "inst.ks=cdrom:/ks.cfg"
 
   # VM naming convention
-  vm_name_min         = "${var.vm_guest_os_family}-${var.vm_guest_os_name}-${var.vm_guest_os_version}-minimal-${local.build_version}"
-  vm_name_rke2          = "${var.vm_guest_os_family}-${var.vm_guest_os_name}-${var.vm_guest_os_version}-rke2-${local.build_version}"
-  bucket_name         = replace("${var.vm_guest_os_family}-${var.vm_guest_os_name}-${var.vm_guest_os_version}", ".", "")
-  bucket_description  = "${var.vm_guest_os_family} ${var.vm_guest_os_name} ${var.vm_guest_os_version}"
+  vm_name_min        = "${var.vm_guest_os_family}-${var.vm_guest_os_name}-${var.vm_guest_os_version}-minimal-${local.build_version}"
+  vm_name_rke2       = "${var.vm_guest_os_family}-${var.vm_guest_os_name}-${var.vm_guest_os_version}-rke2-${local.build_version}"
+  bucket_name        = replace("${var.vm_guest_os_family}-${var.vm_guest_os_name}-${var.vm_guest_os_version}", ".", "")
+  bucket_description = "${var.vm_guest_os_family} ${var.vm_guest_os_name} ${var.vm_guest_os_version}"
 }
 
 //  BLOCK: source
@@ -437,11 +437,11 @@ build {
       vsphere_endpoint         = var.vsphere_server
       vsphere_folder           = var.vsphere_folder
       # Compliance metadata
-      stig_profile             = "xccdf_org.ssgproject.content_profile_stig"
-      fips_mode                = "enabled"
-      selinux_mode             = "enforcing"
-      aide_initialized         = "true"
-      usbguard_configured      = "true"
+      stig_profile        = "xccdf_org.ssgproject.content_profile_stig"
+      fips_mode           = "enabled"
+      selinux_mode        = "enforcing"
+      aide_initialized    = "true"
+      usbguard_configured = "true"
     }
   }
 }
