@@ -1,7 +1,10 @@
 #!/bin/sh
+# File: build.sh
+# Copyright 2022-2025 Korea Battle Simulation Center. All rights reserved.
+# SPDX-License-Identifier: MIT
+#
 # Build Script
 #
-# /usr/bin/ssh-keygen -f ~/.ssh/known_hosts -R 192.168.60.25
 
 follow_link() {
 	FILE="$1"
@@ -17,23 +20,10 @@ CONFIG_8_PATH=$(realpath "${1:-${SCRIPT_PATH}/rhel8}")
 CONFIG_9_PATH=$(realpath "${1:-${SCRIPT_PATH}/rhel9}")
 COMMON_PATH=$(realpath "${1:-${SCRIPT_PATH}/common}")
 
-##
-# Build RHEL VM Templates
-##
-### Build RHEL 8 VM Template
-# echo "Building RHEL 8 Template"
-# packer build -force -on-error=ask \
-# 		-var-file=${COMMON_PATH}/enclave.pkrvars.hcl \
-# 		-var-file=${COMMON_PATH}/common.pkrvars.hcl rhel8/
-
-### Build RHEL 9 VM Template
-echo "Building RHEL 9 Template"
+echo "Building Red Hat Enterprise Linux Linux 9 Template"
 packer build -force -on-error=ask \
-		-var-file=${COMMON_PATH}/enclave.pkrvars.hcl \
-		-var-file=${COMMON_PATH}/common.pkrvars.hcl rhel9/
-
-### Build RHEL 8 Satellite Server VM Template
-# echo "Building RHEL 8 Satellite Server Template"
-# packer build -force -on-error=ask \
-# 		-var-file=${COMMON_PATH}/enclave.pkrvars.hcl \
-# 		-var-file=${COMMON_PATH}/common.pkrvars.hcl satellite/
+    -var-file=${COMMON_PATH}/enclave.pkrvars.hcl \
+    -var-file=${COMMON_PATH}/common.pkrvars.hcl \
+    -var-file=${COMMON_PATH}/linux-storage.pkrvars.hcl \
+    -var-file=${COMMON_PATH}/network.pkrvars.hcl \
+    ./rhel9/

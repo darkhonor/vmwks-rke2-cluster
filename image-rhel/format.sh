@@ -1,9 +1,12 @@
 #!/bin/sh
-#
-# Format Packer Configuration Templates and Markdown Files
+# File: format.sh (Enhanced)
+# Copyright 2022-2025 Korea Battle Simulation Center. All rights reserved.
+# SPDX-License-Identifier: MIT
+# 
+# Cleanup Shell Script to format Packer HCL files
 #
 
-echo "Formatting Packer templates..."
+packer fmt common/
 packer fmt rhel9/
 
 echo "Formatting Markdown files..."

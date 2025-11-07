@@ -1,32 +1,51 @@
 #!/bin/sh
+# File: validate.sh (Enhanced)
+# Copyright 2022-2025 Korea Battle Simulation Center. All rights reserved.
+# SPDX-License-Identifier: MIT
 # 
 # Script to validate the Packer configuration
 #
 
-follow_link() {
-	FILE="$1"
-	while [ -h "$FILE" ]; do
-		# On Mac OS, readlink -f doesn't work.
-		FILE="$(readlink "$FILE")"
-	done
-	echo "$FILE"
-}
+set -euo pipefail
 
-SCRIPT_PATH=$(realpath "$(dirname "$(follow_link "$0")")")
-CONFIG_PATH=$(realpath "${1:-${SCRIPT_PATH}/rhel8}")
-COMMON_PATH=$(realpath "${1:-${SCRIPT_PATH}/common}")
+echo "🔍 Validating Red Hat Enterprise Linux 9 Template Configuration"
+echo "================================================================"
 
-echo "Validating RHEL8 Configuration..."
+# Validate Vault connectivity
+echo "[1/3] Validating Vault connectivity..."
+if [[ -z "${VAULT_ADDR:-}" ]]; then
+    echo "⚠️  WARNING: VAULT_ADDR not set"
+    echo "   Set: export VAULT_ADDR=https://vault.kten.mil"
+else
+    if vault status >/dev/null 2>&1; then
+        echo "✅ Vault connectivity validated"
+    else
+        echo "❌ Error: Cannot connect to Vault"
+        exit 1
+    fi
+fi
+
+# Validate Packer configuration
+echo "[2/3] Validating Packer configuration..."
 packer validate \
-    -var-file=${COMMON_PATH}/common.pkrvars.hcl \
-	-var-file=${COMMON_PATH}/enclave.pkrvars.hcl ./rhel8
+    -var "vault_address=${VAULT_ADDR:-https://vault.kten.mil}" \
+    -var-file=./common/enclave.pkrvars.hcl \
+    -var-file=./common/common.pkrvars.hcl \
+    -var-file=./common/linux-storage.pkrvars.hcl \
+    -var-file=./common/network.pkrvars.hcl \
+    ./rhel9/
 
-echo "Validating RHEL9 Configuration..."
-packer validate \
-    -var-file=${COMMON_PATH}/common.pkrvars.hcl \
-	-var-file=${COMMON_PATH}/enclave.pkrvars.hcl ./rhel9
+if [ $? -eq 0 ]; then
+    echo "✅ Packer configuration is valid"
+else
+    echo "❌ Packer configuration validation failed"
+    exit 1
+fi
 
-echo "Validating RHEL8 Satellite Server Configuration..."
-packer validate \
-    -var-file=${COMMON_PATH}/common.pkrvars.hcl \
-	-var-file=${COMMON_PATH}/enclave.pkrvars.hcl ./satellite
+# Validate Ansible playbooks
+echo "[3/3] Validating Ansible playbooks..."
+ansible-playbook --syntax-check rhel9-baseline.yml
+ansible-playbook --syntax-check rhel9-ws.yml
+
+echo ""
+echo "✅ All validations passed!"

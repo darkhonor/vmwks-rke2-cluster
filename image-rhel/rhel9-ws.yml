@@ -1,11 +1,11 @@
-# File: rhel9-baseline.yml (Enhanced)
+# File: rhel9-ws.yml (Enhanced)
 ---
-- name: Post-SCAP Configuration and Validation for RHEL 9 Template
+- name: Post-SCAP Configuration and Validation for RHEL 9 Workstations
   become: true
   become_method: sudo
   gather_facts: true
   hosts: all
-  
+
   # [STIG-ID V-257777] Pre-tasks to validate SCAP application
   pre_tasks:
     - name: Verify SCAP profile was applied during kickstart
@@ -65,6 +65,11 @@
       connected_network: false    # Required to ensure nothing tries to access the Internet
       configure_local_cert_authority: true
       ca_pem_path: https://garden.kten.test/certs/ceist-ca.crt
+    - role: firefox_stig
+      authorized_sites_popup_blocker: [
+        "https://kbsc.kten.test/",
+        "https://vcs.kten.test"
+      ]
 
     # [STIG-ID V-257780] Final cleanup and preparation
     - role: system_clean

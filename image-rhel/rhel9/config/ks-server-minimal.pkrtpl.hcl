@@ -1,12 +1,12 @@
-# Copyright 2023 VMware, Inc. All rights reserved
+# Copyright 2023-2024 Broadcom. All rights reserved.
 # SPDX-License-Identifier: BSD-2
 
-# Red Hat Enterprise Linux Server 9
+# Oracle Linux Server 9
 
 ### Installs from the first attached CD-ROM/DVD on the system.
 cdrom
 
-### Performs the kickstart installation in text mode. 
+### Performs the kickstart installation in text mode.
 ### By default, kickstart installations are performed in graphical mode.
 text
 
@@ -24,20 +24,15 @@ keyboard ${vm_guest_os_keyboard}
 ### --device	  device to be activated and / or configured with the network command
 ### --bootproto	  method to obtain networking configuration for device (default dhcp)
 ### --noipv6	  disable IPv6 on this device
-###
-### network  --bootproto=static --ip=172.16.11.200 --netmask=255.255.255.0 --gateway=172.16.11.200 --nameserver=172.16.11.4 --hostname centos-linux-8
-network --bootproto=dhcp
+${network}
 
 ### Lock the root account.
 rootpw --lock
 
 ### The selected profile will restrict root login.
 ### Add a user that can login and escalate privileges.
-user --name=${builder_username} --groups=wheel --password=${builder_password} --iscrypted
 user --name=${ansible_username} --lock --groups=wheel
 sshkey --username=${ansible_username} "${ansible_key}"
-user --name=${nessus_username} --lock --groups=wheel
-sshkey --username=${nessus_username} "${nessus_key}"
 
 ### Configure firewall settings for the system.
 ### --enabled	reject incoming connections that are not in response to outbound requests
@@ -56,38 +51,8 @@ selinux --enforcing
 ### Sets the system time zone.
 timezone ${vm_guest_os_timezone}
 
-### Sets how the boot loader should be installed.
-bootloader --location=mbr
-
-### Initialize any invalid partition tables found on disks.
-zerombr
-
-### Removes partitions from the system, prior to creation of new partitions. 
-### By default, no partitions are removed.
-### --linux	erases all Linux partitions.
-### --initlabel Initializes a disk (or disks) by creating a default disk label for all disks in their respective architecture.
-clearpart --all --initlabel
-
-### Modify partition sizes for the virtual machine hardware.
-### Create primary system partitions.
-part /boot --fstype xfs --size=2048 --label=BOOTFS --fsoptions="nodev"
-part /boot/efi --fstype vfat --size=2048 --label=EFIFS --fsoptions="nodev"
-part pv.01 --size=100 --grow # --encrypted --luks-version=luks2 --passphrase=zxc123ZXC!@#zxc123
-
-### Create a logical volume management (LVM) group.
-volgroup sysvg --pesize=4096 pv.01
-
-### Modify logical volume sizes for the virtual machine hardware.
-### Create logical volumes.
-logvol swap --fstype swap --name=lv_swap --vgname=sysvg --size=8192 --label=SWAPFS
-logvol / --fstype xfs --name=lv_root --vgname=sysvg --size=15360 --label=ROOTFS
-logvol /home --fstype xfs --name=lv_home --vgname=sysvg --size=4096 --label=HOMEFS --fsoptions="nodev,nosuid"
-logvol /opt --fstype xfs --name=lv_opt --vgname=sysvg --size=8192 --label=OPTFS --fsoptions="nodev"
-logvol /tmp --fstype xfs --name=lv_tmp --vgname=sysvg --size=3072 --label=TMPFS --fsoptions="nodev,noexec,nosuid"
-logvol /var --fstype xfs --name=lv_var --vgname=sysvg --size=4096 --label=VARFS --fsoptions="nodev"
-logvol /var/tmp --fstype xfs --name=lv_vtmp --vgname=sysvg --size=3072 --label=VTMPFS --fsoptions="nodev,noexec,nosuid"
-logvol /var/log --fstype xfs --name=lv_log --vgname=sysvg --size=5120 --label=LOGFS --fsoptions="nodev,noexec,nosuid"
-logvol /var/log/audit --fstype xfs --name=lv_audit --vgname=sysvg --size=10240 --label=AUDITFS --fsoptions="nodev,noexec,nosuid"
+### Partitioning
+${storage}
 
 ### Modifies the default set of services that will run under the default runlevel.
 services --enabled=NetworkManager,sshd
@@ -97,33 +62,78 @@ skipx
 
 ### Disable kdump per STIG
 %addon com_redhat_kdump --disable
+
 %end
+
+### Add DISA Red Hat Enterprise Linux 9 STIG SCAP Profile
+### STIG Configured via Ansible
+%addon com_redhat_oscap
+    content-type = scap-security-guide
+    datastream-id = scap_org.open-scap_datastream_from_xccdf_ssg-rhel9-xccdf.xml
+    xccdf-id = scap_org.open-scap_cref_ssg-rhel9-xccdf.xml
+    profile = xccdf_org.ssgproject.content_profile_stig
+%end
+###
 
 ### Packages selection.
 %packages --ignoremissing --excludedocs
-@core
--iwl*firmware
-esc
-openssl-pkcs11
-opensc
+@^minimal-environment
+@guest-agents
+aide
+audispd-plugins
 audit
+chrony
+crypto-policies
+fapolicyd
+firewalld
+gnutls-utils
+libreswan
+nss-tools
+opensc
+openscap
+openscap-scanner
+openssh-clients
+openssh-server
+openssl-pkcs11
+pcsc-lite
+policycoreutils
+policycoreutils-python-utils
+rng-tools
 rsyslog
 rsyslog-gnutls
+scap-security-guide
+sudo
 tmux
-openssh-server
-rng-tools
-perl
+usbguard
+libicu      # Added 10 Dec 24: CND rqmt for EvaluateSTIG
+lshw        # Added 10 Dec 24: CND rqmt for EvaluateSTIG
+cloud-init
+esc
+ca-certificates
+-iprutils
+-nfs-utils
+-quagga
+-sendmail
+-telnet-server
+-tftp-server
+-tuned
+-vsftpd
+-xorg-x11-server-common
+-iwl*firmware
 %end
+
+### Run the Setup Agent on first boot
+firstboot --enable
 
 ### Post-installation commands.
 %post
-/usr/sbin/subscription-manager register --username ${rhn_username} --password ${rhn_password} --autosubscribe --force
-/usr/sbin/subscription-manager repos --enable "codeready-builder-for-rhel-9-x86_64-rpms"
-dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+### dnf install -y oracle-epel-release-el9
 dnf makecache
 dnf install -y sudo open-vm-tools perl
+%{ if additional_packages != "" ~}
+dnf install -y ${additional_packages}
+%{ endif ~}
 echo "${ansible_username} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/${ansible_username}
-echo "${nessus_username} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/${nessus_username}
 sed -i "s/^.*requiretty/#Defaults requiretty/" /etc/sudoers
 %end
 

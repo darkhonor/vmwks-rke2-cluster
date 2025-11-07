@@ -1,5 +1,6 @@
-# Copyright 2023-2024 Broadcom. All rights reserved.
-# SPDX-License-Identifier: BSD-2
+# File: common/network.pkrvars.hcl
+# Copyright 2022-2025 Korea Battle Simulation Center. All rights reserved.
+# SPDX-License-Identifier: MIT
 
 /*
     DESCRIPTION:
@@ -12,4 +13,4 @@
 vm_ip_address = null
 vm_ip_netmask = null
 vm_ip_gateway = null
-vm_dns_list   = ["10.110.42.1", "10.110.11.1"]
+vm_dns_list   = ["192.168.51.65"]

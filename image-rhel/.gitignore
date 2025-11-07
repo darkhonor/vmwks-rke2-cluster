@@ -87,7 +87,6 @@ crash.log
 #
 # NOT EXCLUDED INTENTIONALLY; SENSITIVE VALUES NOT STORED HERE
 #*.pkrvars.hcl
-enclave.pkrvars.hcl
 
 # For built boxes
 *.box

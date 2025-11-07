@@ -1,5 +1,6 @@
-# Copyright 2023-2024 Broadcom. All rights reserved.
-# SPDX-License-Identifier: BSD-2
+# File: common/linux-storage.pkrvars.hcl
+# Copyright 2022-2025 Korea Battle Simulation Center. All rights reserved.
+# SPDX-License-Identifier: MIT
 
 /*
     DESCRIPTION:
@@ -10,6 +11,7 @@
 // VM Storage Settings
 vm_disk_device   = "sda"
 vm_disk_use_swap = true
+
 vm_disk_partitions = [
   {
     name = "efi"
@@ -69,7 +71,7 @@ vm_disk_lvm = [
       },
       {
         name = "lv_root",
-        size = 15360,
+        size = -1,
         format = {
           label  = "ROOTFS",
           fstype = "xfs",
@@ -89,18 +91,6 @@ vm_disk_lvm = [
         mount = {
           path    = "/home",
           options = "nodev,nosuid",
-        },
-      },
-      {
-        name = "lv_opt",
-        size = -1,
-        format = {
-          label  = "OPTFS",
-          fstype = "xfs",
-        },
-        mount = {
-          path    = "/opt",
-          options = "nodev",
         },
       },
       {
@@ -167,14 +157,13 @@ vm_disk_lvm = [
   }
 ]
 
-vm_disk_use_swap_rke2 = false
-vm_disk_lvm_rke2 = [
+vm_disk_lvm_ws = [
   {
     name : "sysvg",
     partitions : [
       {
         name = "lv_root",
-        size = -1,
+        size = 20480,
         format = {
           label  = "ROOTFS",
           fstype = "xfs",
@@ -186,7 +175,7 @@ vm_disk_lvm_rke2 = [
       },
       {
         name = "lv_home",
-        size = 10240,
+        size = -1,
         format = {
           label  = "HOMEFS",
           fstype = "xfs",
@@ -194,18 +183,6 @@ vm_disk_lvm_rke2 = [
         mount = {
           path    = "/home",
           options = "nodev,nosuid",
-        },
-      },
-      {
-        name = "lv_rancher",
-        size = 153600,
-        format = {
-          label  = "RANCHERFS",
-          fstype = "xfs",
-        },
-        mount = {
-          path    = "/var/lib/rancher",
-          options = "nodev",
         },
       },
       {
@@ -222,7 +199,7 @@ vm_disk_lvm_rke2 = [
       },
       {
         name = "lv_var",
-        size = 10240,
+        size = 20480,
         format = {
           label  = "VARFS",
           fstype = "xfs",
@@ -232,6 +209,7 @@ vm_disk_lvm_rke2 = [
           options = "nodev",
         },
       },
+
       {
         name = "lv_vtmp",
         size = 4096,

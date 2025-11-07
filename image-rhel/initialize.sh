@@ -1,7 +1,15 @@
 #!/bin/sh
-# Build Script
+# File: initialize.sh (Enhanced)
+# Copyright 2022-2025 Korea Battle Simulation Center. All rights reserved.
+# SPDX-License-Identifier: MIT
 #
-# /usr/bin/ssh-keygen -f ~/.ssh/known_hosts -R 192.168.60.25
+# Initialize the Configuration
+#
+
+set -euo pipefail
+
+echo "🔧 Initializing Packer RHEL9 Template Build Environment"
+echo "========================================================"
 
 follow_link() {
 	FILE="$1"
@@ -15,13 +23,25 @@ follow_link() {
 SCRIPT_PATH=$(realpath "$(dirname "$(follow_link "$0")")")
 CONFIG_PATH=$(realpath "${1:-${SCRIPT_PATH}/rhel8}")
 
-##
-# Initialize Build Environment
-##
-# Download Required Ansible Roles prior to the build
-ansible-galaxy install -r $SCRIPT_PATH/roles/requirements.yml -p $SCRIPT_PATH/roles/ --ignore-errors
+# Install Ansible Galaxy roles
+echo "[1/3] Installing Ansible Galaxy roles..."
+ansible-galaxy install -r $SCRIPT_PATH/roles/requirements.yml -p $SCRIPT_PATH/roles/
 
-# Initialize Packer Plugins
-packer init -upgrade $SCRIPT_PATH/rhel8
-packer init -upgrade $SCRIPT_PATH/rhel9
-packer init -upgrade $SCRIPT_PATH/satellite
+# Create SCAP results directory
+echo "[2/3] Creating SCAP results directory..."
+mkdir -p scap-results
+chmod 755 scap-results
+
+# Initialize Packer plugins (on Internet-connected host only)
+# Uncomment on Internet-connected systems
+# echo "[3/3] Initializing Packer plugins..."
+# packer init -upgrade $SCRIPT_PATH/rhel8
+# packer init -upgrade $SCRIPT_PATH/rhel9
+
+echo ""
+echo "✅ Initialization complete!"
+echo ""
+echo "Next steps:"
+echo "1. Configure Vault authentication (see vault-setup.sh)"
+echo "2. Run ./validate.sh to validate configuration"
+echo "3. Run ./build.sh to build templates"
