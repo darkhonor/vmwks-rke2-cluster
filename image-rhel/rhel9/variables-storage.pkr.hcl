@@ -72,6 +72,26 @@ variable "vm_disk_lvm_ws" {
       })
     }))
   }))
-  description = "The LVM configuration for the virtual disk."
+  description = "The LVM configuration for the virtual disk for RHEL Workstations."
+  default     = []
+}
+
+variable "vm_disk_lvm_rke2" {
+  type = list(object({
+    name = string
+    partitions = list(object({
+      name = string
+      size = number
+      format = object({
+        label  = string
+        fstype = string
+      })
+      mount = object({
+        path    = string
+        options = string
+      })
+    }))
+  }))
+  description = "The LVM configuration for the virtual disk for RKE2 Servers."
   default     = []
 }

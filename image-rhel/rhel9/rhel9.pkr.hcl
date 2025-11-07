@@ -28,10 +28,10 @@
 packer {
   required_version = ">= 1.14.0"
   required_plugins {
-    # https://developer.hashicorp.com/packer/integrations/hashicorp/vsphere/latest/components/builder/vsphere-iso
-    vsphere = {
-      source  = "github.com/hashicorp/vsphere"
-      version = ">= 2.0.0"
+    # https://developer.hashicorp.com/packer/integrations/hashicorp/vmware/latest/components/builder/iso
+    vmware = {
+      source  = "github.com/hashicorp/vmware"
+      version = ">= 1.2.0"
     }
     # https://developer.hashicorp.com/packer/integrations/hashicorp/ansible
     ansible = {
@@ -85,8 +85,6 @@ locals {
     "/ks.cfg" = templatefile("${abspath(path.root)}/config/ks.pkrtpl.hcl", {
       ansible_username      = local.ansible_username
       ansible_key           = local.ansible_ssh_key
-      nessus_username       = local.nessus_username
-      nessus_key            = local.nessus_ssh_key
       vm_guest_os_language  = var.vm_guest_os_language
       vm_guest_os_keyboard  = var.vm_guest_os_keyboard
       vm_guest_os_timezone  = var.vm_guest_os_timezone
@@ -107,12 +105,10 @@ locals {
       additional_packages = join(" ", var.additional_packages)
     })
   }
-  data_source_content_ws = {
-    "/ks.cfg" = templatefile("${abspath(path.root)}/config/ks-ws.pkrtpl.hcl", {
+  data_source_content_rke2 = {
+    "/ks.cfg" = templatefile("${abspath(path.root)}/config/ks-rke2.pkrtpl.hcl", {
       ansible_username      = local.ansible_username
       ansible_key           = local.ansible_ssh_key
-      nessus_username       = local.nessus_username
-      nessus_key            = local.nessus_ssh_key
       vm_guest_os_language  = var.vm_guest_os_language
       vm_guest_os_keyboard  = var.vm_guest_os_keyboard
       vm_guest_os_timezone  = var.vm_guest_os_timezone
@@ -126,9 +122,9 @@ locals {
       })
       storage = templatefile("${abspath(path.root)}/config/storage.pkrtpl.hcl", {
         device     = var.vm_disk_device
-        swap       = var.vm_disk_use_swap
+        swap       = false
         partitions = var.vm_disk_partitions
-        lvm        = var.vm_disk_lvm_ws
+        lvm        = var.vm_disk_lvm_rke2
       })
       additional_packages = join(" ", var.additional_packages)
     })
@@ -146,7 +142,7 @@ locals {
 
   # VM naming convention
   vm_name_min         = "${var.vm_guest_os_family}-${var.vm_guest_os_name}-${var.vm_guest_os_version}-minimal-${local.build_version}"
-  vm_name_ws          = "${var.vm_guest_os_family}-${var.vm_guest_os_name}-${var.vm_guest_os_version}-ws-${local.build_version}"
+  vm_name_rke2          = "${var.vm_guest_os_family}-${var.vm_guest_os_name}-${var.vm_guest_os_version}-rke2-${local.build_version}"
   bucket_name         = replace("${var.vm_guest_os_family}-${var.vm_guest_os_name}-${var.vm_guest_os_version}", ".", "")
   bucket_description  = "${var.vm_guest_os_family} ${var.vm_guest_os_name} ${var.vm_guest_os_version}"
 }
