@@ -152,22 +152,6 @@ locals {
 
 source "vsphere-iso" "linux-rhel-minimal" {
 
-  # vCenter Server Endpoint Settings and Credentials
-  # [STIG-ID V-257777] [NIST SC-12] Credentials from Vault
-  vcenter_server      = var.vsphere_server
-  username            = local.vsphere_username
-  password            = local.vsphere_password
-  insecure_connection = var.vsphere_insecure_connection
-
-  // vSphere Settings
-  datacenter                     = var.vsphere_datacenter
-  cluster                        = var.vsphere_cluster
-  host                           = var.vsphere_host
-  datastore                      = var.vsphere_datastore
-  folder                         = var.vsphere_folder
-  resource_pool                  = var.vsphere_resource_pool
-  set_host_for_datastore_uploads = var.vsphere_set_host_for_datastore_uploads
-
   // Virtual Machine Settings
   vm_name              = local.vm_name_min
   guest_os_type        = var.vm_guest_os_type
@@ -230,38 +214,9 @@ source "vsphere-iso" "linux-rhel-minimal" {
   ssh_private_key_file = var.ansible_private_key
   ssh_port             = var.communicator_port
   ssh_timeout          = var.communicator_timeout
-
-  // Template and Content Library Settings
-  convert_to_template = var.common_template_conversion
-  dynamic "content_library_destination" {
-    for_each = var.common_content_library_name != null ? [1] : []
-    content {
-      library     = var.common_content_library
-      description = local.build_description
-      ovf         = var.common_content_library_ovf
-      destroy     = var.common_content_library_destroy
-      skip_import = var.common_content_library_skip_export
-    }
-  }
 }
 
 source "vsphere-iso" "linux-rhel-ws" {
-
-  # vCenter Server Endpoint Settings and Credentials
-  # [STIG-ID V-257777] [NIST SC-12] Credentials from Vault
-  vcenter_server      = var.vsphere_server
-  username            = local.vsphere_username
-  password            = local.vsphere_password
-  insecure_connection = var.vsphere_insecure_connection
-
-  // vSphere Settings
-  datacenter                     = var.vsphere_datacenter
-  cluster                        = var.vsphere_cluster
-  host                           = var.vsphere_host
-  datastore                      = var.vsphere_datastore
-  folder                         = var.vsphere_folder
-  resource_pool                  = var.vsphere_resource_pool
-  set_host_for_datastore_uploads = var.vsphere_set_host_for_datastore_uploads
 
   // Virtual Machine Settings
   vm_name              = local.vm_name_ws
@@ -325,19 +280,72 @@ source "vsphere-iso" "linux-rhel-ws" {
   ssh_private_key_file = var.ansible_private_key
   ssh_port             = var.communicator_port
   ssh_timeout          = var.communicator_timeout
+}
 
-  // Template and Content Library Settings
-  convert_to_template = var.common_template_conversion
-  dynamic "content_library_destination" {
-    for_each = var.common_content_library_name != null ? [1] : []
-    content {
-      library     = var.common_content_library
-      description = local.build_description
-      ovf         = var.common_content_library_ovf
-      destroy     = var.common_content_library_destroy
-      skip_import = var.common_content_library_skip_export
-    }
+source "vsphere-iso" "linux-rhel-rke2" {
+
+  // Virtual Machine Settings
+  vm_name              = local.vm_name_ws
+  guest_os_type        = var.vm_guest_os_type
+  firmware             = var.vm_firmware
+  CPUs                 = var.vm_cpu_count
+  cpu_cores            = var.vm_cpu_cores
+  CPU_hot_plug         = var.vm_cpu_hot_add
+  RAM                  = var.vm_mem_size
+  RAM_hot_plug         = var.vm_mem_hot_add
+  cdrom_type           = var.vm_cdrom_type
+  disk_controller_type = var.vm_disk_controller_type
+  storage {
+    disk_size             = var.vm_disk_size_rke2
+    disk_thin_provisioned = var.vm_disk_thin_provisioned
   }
+  network_adapters {
+    network      = var.vsphere_network
+    network_card = var.vm_network_card
+  }
+  vm_version           = var.common_vm_version
+  remove_cdrom         = var.common_remove_cdrom
+  reattach_cdroms      = var.vm_cdrom_count
+  tools_upgrade_policy = var.common_tools_upgrade_policy
+  notes                = local.build_description
+
+  // Removable Media Settings
+  iso_paths    = local.iso_paths
+  http_content = var.common_data_source == "http" ? local.data_source_content_ws : null
+  cd_content   = var.common_data_source == "disk" ? local.data_source_content_ws : null
+
+  # Boot and Provisioning Settings
+  # [STIG-ID V-257777] [NIST SC-13] Secure boot with FIPS, SELinux, and audit
+  http_ip       = var.common_data_source == "http" ? var.common_http_ip : null
+  http_port_min = var.common_data_source == "http" ? var.common_http_port_min : null
+  http_port_max = var.common_data_source == "http" ? var.common_http_port_max : null
+  boot_order    = var.vm_boot_order
+  boot_wait     = var.vm_boot_wait
+  boot_command = [
+    "<up>",
+    "e",
+    "<down><down><end><wait>",
+    # Enable FIPS mode, SELinux enforcing, and audit logging
+    # Remove inst.sshd to prevent SSH access during installation
+    " fips=1 inst.text selinux=1 enforcing=1 audit=1 ${local.data_source_command}",
+    "<enter><wait><leftCtrlOn>x<leftCtrlOff>"
+  ]
+  ip_wait_timeout   = var.common_ip_wait_timeout
+  ip_settle_timeout = var.common_ip_settle_timeout
+  shutdown_command  = "sudo -S -E shutdown -P now"
+  shutdown_timeout  = var.common_shutdown_timeout
+
+  # Communicator Settings and Credentials
+  # [STIG-ID V-257842] [NIST IA-5] SSH key-based authentication
+  communicator         = "ssh"
+  ssh_proxy_host       = var.communicator_proxy_host
+  ssh_proxy_port       = var.communicator_proxy_port
+  ssh_proxy_username   = var.communicator_proxy_username
+  ssh_proxy_password   = var.communicator_proxy_password
+  ssh_username         = local.ansible_username
+  ssh_private_key_file = var.ansible_private_key
+  ssh_port             = var.communicator_port
+  ssh_timeout          = var.communicator_timeout
 }
 
 //  BLOCK: build
@@ -346,7 +354,8 @@ source "vsphere-iso" "linux-rhel-ws" {
 build {
   sources = [
     "source.vsphere-iso.linux-rhel-minimal",
-    "source.vsphere-iso.linux-rhel-ws"
+    # "source.vsphere-iso.linux-rhel-ws",
+    # "source.vsphere-iso.linux-rhel-rke2",
   ]
 
   # [STIG-ID V-257849] Post-SCAP Ansible configuration
@@ -374,6 +383,24 @@ build {
     galaxy_file            = "${path.cwd}/roles/requirements.yml"
     galaxy_force_with_deps = true
     playbook_file          = "${path.cwd}/rhel9-ws.yml"
+    roles_path             = "${path.cwd}/roles"
+    ansible_env_vars = [
+      "ANSIBLE_CONFIG=${path.cwd}/ansible.cfg",
+      "ANSIBLE_PYTHON_INTERPRETER=/usr/libexec/platform-python"
+    ]
+    extra_arguments = [
+      "--extra-vars",
+      "ansible_become_pass=''"
+    ]
+  }
+
+  # [STIG-ID V-257849] Post-SCAP Ansible configuration
+  provisioner "ansible" {
+    only                   = ["vsphere-iso.linux-rhel-rke2"]
+    user                   = local.ansible_username
+    galaxy_file            = "${path.cwd}/roles/requirements.yml"
+    galaxy_force_with_deps = true
+    playbook_file          = "${path.cwd}/rhel9-rke2-baseline.yml"
     roles_path             = "${path.cwd}/roles"
     ansible_env_vars = [
       "ANSIBLE_CONFIG=${path.cwd}/ansible.cfg",

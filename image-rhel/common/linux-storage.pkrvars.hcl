@@ -249,3 +249,108 @@ vm_disk_lvm_ws = [
     ],
   }
 ]
+
+vm_disk_lvm_rke2 = [
+  {
+    name : "sysvg",
+    partitions : [
+      {
+        name = "lv_root",
+        size = 20480,
+        format = {
+          label  = "ROOTFS",
+          fstype = "xfs",
+        },
+        mount = {
+          path    = "/",
+          options = "",
+        },
+      },
+      {
+        name = "lv_home",
+        size = 10240,
+        format = {
+          label  = "HOMEFS",
+          fstype = "xfs",
+        },
+        mount = {
+          path    = "/home",
+          options = "nodev,noexec,nosuid",
+        },
+      },
+      {
+        name = "lv_tmp",
+        size = 4096,
+        format = {
+          label  = "TMPFS",
+          fstype = "xfs",
+        },
+        mount = {
+          path    = "/tmp",
+          options = "nodev,noexec,nosuid",
+        },
+      },
+      {
+        name = "lv_var",
+        size = 20480,
+        format = {
+          label  = "VARFS",
+          fstype = "xfs",
+        },
+        mount = {
+          path    = "/var",
+          options = "nodev",
+        },
+      },
+      # Rancher Directory: Autogrow based on the size of the disk provided
+      {
+        name = "lv_rancher",
+        size = -1,
+        format = {
+          label  = "VARFS",
+          fstype = "xfs",
+        },
+        mount = {
+          path    = "/var/lib/rancher",
+          options = "nodev",
+        },
+      },
+      {
+        name = "lv_vtmp",
+        size = 4096,
+        format = {
+          label  = "VARTMPFS",
+          fstype = "xfs",
+        },
+        mount = {
+          path    = "/var/tmp",
+          options = "nodev,noexec,nosuid",
+        },
+      },
+      {
+        name = "lv_log",
+        size = 5120,
+        format = {
+          label  = "LOGFS",
+          fstype = "xfs",
+        },
+        mount = {
+          path    = "/var/log",
+          options = "nodev,noexec,nosuid",
+        },
+      },
+      {
+        name = "lv_audit",
+        size = 10240,
+        format = {
+          label  = "AUDITFS",
+          fstype = "xfs",
+        },
+        mount = {
+          path    = "/var/log/audit",
+          options = "nodev,noexec,nosuid",
+        },
+      },
+    ],
+  }
+]

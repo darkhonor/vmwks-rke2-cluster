@@ -185,7 +185,12 @@ variable "vm_disk_size" {
 
 variable "vm_disk_size_ws" {
   type        = number
-  description = "The size for the virtual disk in MB."
+  description = "The size for the virtual disk in MB for RHEL Workstations."
+}
+
+variable "vm_disk_size_rke2" {
+  type        = number
+  description = "The size for the virtual disk in MB for RKE2 Servers."
 }
 
 variable "vm_disk_controller_type" {
