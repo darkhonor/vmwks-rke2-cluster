@@ -11,8 +11,8 @@ iso_path = "/mnt/e/iso"
 // Ansible Credentials
 ansible_private_key = "~/.ssh/id_aackerman-2024.key"
 
-kv_secrets_mount = "local-kv"
-kv_ansible_path  = "ansible"
-kv_build_path    = "packer-build"
+vault_secrets_mount = "local-kv"
+vault_ansible_path  = "ansible"
+vault_build_path    = "packer-build"
 
 vm_network_device = "ens192"

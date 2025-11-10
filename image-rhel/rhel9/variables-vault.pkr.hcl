@@ -38,19 +38,19 @@ variable "vault_skip_verify" {
   default     = false
 }
 
-variable "kv_secrets_mount" {
+variable "vault_secrets_mount" {
   type        = string
   description = "The mount path for the KV secrets engine in Vault."
   default     = "local-kv"
 }
 
-variable "kv_ansible_path" {
+variable "vault_ansible_path" {
   type        = string
   description = "The path to Ansible credentials in the KV secrets engine."
   default     = "ansible"
 }
 
-variable "kv_build_path" {
+variable "vault_build_path" {
   type        = string
   description = "The path to Build account credentials in the KV secrets engine."
   default     = "packer-build"
@@ -58,27 +58,27 @@ variable "kv_build_path" {
 
 # [STIG-ID V-257842] [NIST IA-5] Ansible Service Account Credentials
 local "ansible_username" {
-  expression = vault("${kv_secrets_mount}/data/${kv_ansible_path}", "username")
+  expression = vault("${vault_secrets_mount}/data/${vault_ansible_path}", "username")
   sensitive  = true
 }
 
 local "ansible_realname" {
-  expression = vault("${kv_secrets_mount}/data/${kv_ansible_path}", "realname")
+  expression = vault("${vault_secrets_mount}/data/${vault_ansible_path}", "realname")
   sensitive  = true
 }
 
 local "ansible_ssh_key" {
-  expression = vault("${kv_secrets_mount}/data/${kv_ansible_path}", "ssh_public_key")
+  expression = vault("${vault_secrets_mount}/data/${vault_ansible_path}", "ssh_public_key")
   sensitive  = true
 }
 
 # [STIG-ID V-257842] Build Account Credentials (if needed for post-install)
 local "build_username" {
-  expression = vault("${kv_secrets_mount}/data/${kv_build_path}", "username")
+  expression = vault("${vault_secrets_mount}/data/${vault_build_path}", "username")
   sensitive  = true
 }
 
 local "build_password_encrypted" {
-  expression = vault("${kv_secrets_mount}/data/${kv_build_path}", "encrypted_password")
+  expression = vault("${vault_secrets_mount}/data/${vault_build_path}", "encrypted_password")
   sensitive  = true
 }

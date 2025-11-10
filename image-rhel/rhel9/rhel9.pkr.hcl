@@ -76,7 +76,7 @@ locals {
     - nessus (vulnerability scanning)
   EOT
 
-  iso_paths = ["[${var.common_iso_datastore}] ${var.iso_path}/${var.iso_file}"]
+  iso_paths = ["${var.iso_path}/${var.iso_file}"]
 
   manifest_date   = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
   manifest_path   = "${path.cwd}/manifests/"
