@@ -76,7 +76,8 @@ locals {
     - nessus (vulnerability scanning)
   EOT
 
-  iso_paths = ["${var.iso_path}/${var.iso_file}"]
+  iso_path     = "file://${var.iso_path}/${var.iso_file}"
+  iso_checksum = "${var.iso_checksum_type}:${var.iso_checksum_value}"
 
   manifest_date   = formatdate("YYYY-MM-DD hh:mm:ss", timestamp())
   manifest_path   = "${path.cwd}/manifests/"
@@ -102,10 +103,10 @@ locals {
         partitions = var.vm_disk_partitions
         lvm        = var.vm_disk_lvm
       })
-      enclave-ntp-fqdn = var.enclave_ntp_fqdn
+      enclave-ntp-fqdn        = var.enclave_ntp_fqdn
       enclave-log-server-fqdn = var.enclave_log_server_fqdn
       enclave-log-server-port = var.enclave_log_server_port
-      additional_packages = join(" ", var.additional_packages)
+      additional_packages     = join(" ", var.additional_packages)
     })
   }
   data_source_content_rke2 = {
@@ -129,10 +130,10 @@ locals {
         partitions = var.vm_disk_partitions
         lvm        = var.vm_disk_lvm_rke2
       })
-      enclave-ntp-fqdn = var.enclave_ntp_fqdn
+      enclave-ntp-fqdn        = var.enclave_ntp_fqdn
       enclave-log-server-fqdn = var.enclave_log_server_fqdn
       enclave-log-server-port = var.enclave_log_server_port
-      additional_packages = join(" ", var.additional_packages)
+      additional_packages     = join(" ", var.additional_packages)
     })
   }
   http_ks_command = "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg"
@@ -162,38 +163,27 @@ source "vmware-iso" "linux-rhel-minimal" {
   vm_name              = local.vm_name_min
   guest_os_type        = var.vm_guest_os_type
   firmware             = var.vm_firmware
-  CPUs                 = var.vm_cpu_count
-  cpu_cores            = var.vm_cpu_cores
-  CPU_hot_plug         = var.vm_cpu_hot_add
-  RAM                  = var.vm_mem_size
-  RAM_hot_plug         = var.vm_mem_hot_add
-  cdrom_type           = var.vm_cdrom_type
-  disk_controller_type = var.vm_disk_controller_type
-  storage {
-    disk_size             = var.vm_disk_size
-    disk_thin_provisioned = var.vm_disk_thin_provisioned
-  }
-  network_adapters {
-    network      = var.vsphere_network
-    network_card = var.vm_network_card
-  }
-  vm_version           = var.common_vm_version
-  remove_cdrom         = var.common_remove_cdrom
-  reattach_cdroms      = var.vm_cdrom_count
-  tools_upgrade_policy = var.common_tools_upgrade_policy
-  notes                = local.build_description
+  cpus                 = var.vm_cpu_count
+  cores                = var.vm_cpu_cores
+  memory               = var.vm_mem_size
+  cdrom_adapter_type   = var.vm_cdrom_type
+  disk_adapter_type    = var.vm_disk_adapter_type
+  disk_size            = var.vm_disk_size
+  disk_type_id         = var.vm_disk_type_id
+  network              = var.vmw_network
+  network_adapter_type = var.vm_network_card
+  version              = var.common_vm_version
 
   // Removable Media Settings
-  iso_paths    = local.iso_paths
+  iso_url      = local.iso_path
+  iso_checksum = local.iso_checksum
   http_content = var.common_data_source == "http" ? local.data_source_content_min : null
   cd_content   = var.common_data_source == "disk" ? local.data_source_content_min : null
 
   # Boot and Provisioning Settings
   # [STIG-ID V-257777] [NIST SC-13] Secure boot with FIPS, SELinux, and audit
-  http_ip       = var.common_data_source == "http" ? var.common_http_ip : null
   http_port_min = var.common_data_source == "http" ? var.common_http_port_min : null
   http_port_max = var.common_data_source == "http" ? var.common_http_port_max : null
-  boot_order    = var.vm_boot_order
   boot_wait     = var.vm_boot_wait
   boot_command = [
     "<up>",
@@ -204,10 +194,8 @@ source "vmware-iso" "linux-rhel-minimal" {
     " fips=1 inst.text selinux=1 enforcing=1 audit=1 ${local.data_source_command}",
     "<enter><wait><leftCtrlOn>x<leftCtrlOff>"
   ]
-  ip_wait_timeout   = var.common_ip_wait_timeout
-  ip_settle_timeout = var.common_ip_settle_timeout
-  shutdown_command  = "sudo -S -E shutdown -P now"
-  shutdown_timeout  = var.common_shutdown_timeout
+  shutdown_command = "sudo -S -E shutdown -P now"
+  shutdown_timeout = var.common_shutdown_timeout
 
   # Communicator Settings and Credentials
   # [STIG-ID V-257842] [NIST IA-5] SSH key-based authentication
@@ -228,38 +216,28 @@ source "vmware-iso" "linux-rhel-minimal" {
 #   vm_name              = local.vm_name_ws
 #   guest_os_type        = var.vm_guest_os_type
 #   firmware             = var.vm_firmware
-#   CPUs                 = var.vm_cpu_count
-#   cpu_cores            = var.vm_cpu_cores
-#   CPU_hot_plug         = var.vm_cpu_hot_add
-#   RAM                  = var.vm_mem_size
-#   RAM_hot_plug         = var.vm_mem_hot_add
-#   cdrom_type           = var.vm_cdrom_type
-#   disk_controller_type = var.vm_disk_controller_type
-#   storage {
+#   cpus                 = var.vm_cpu_count
+#   cores            = var.vm_cpu_cores
+#   memory                  = var.vm_mem_size
+#   cdrom_adapter_type        = var.vm_cdrom_type
+#     disk_adapter_type  = var.vm_disk_adapter_type
 #     disk_size             = var.vm_disk_size
-#     disk_thin_provisioned = var.vm_disk_thin_provisioned
-#   }
-#   network_adapters {
-#     network      = var.vsphere_network
-#     network_card = var.vm_network_card
-#   }
-#   vm_version           = var.common_vm_version
-#   remove_cdrom         = var.common_remove_cdrom
-#   reattach_cdroms      = var.vm_cdrom_count
-#   tools_upgrade_policy = var.common_tools_upgrade_policy
-#   notes                = local.build_description
+#   disk_type_id = var.vm_disk_type_id
+#   network      = var.vmw_network
+#     network_adapter_type = var.vm_network_card
+#   
+#   version           = var.common_vm_version
 
 #   // Removable Media Settings
-#   iso_paths    = local.iso_paths
+#  iso_url    = local.iso_path
+#  iso_checksum = local.iso_checksum
 #   http_content = var.common_data_source == "http" ? local.data_source_content_ws : null
 #   cd_content   = var.common_data_source == "disk" ? local.data_source_content_ws : null
 
 #   # Boot and Provisioning Settings
 #   # [STIG-ID V-257777] [NIST SC-13] Secure boot with FIPS, SELinux, and audit
-#   http_ip       = var.common_data_source == "http" ? var.common_http_ip : null
 #   http_port_min = var.common_data_source == "http" ? var.common_http_port_min : null
 #   http_port_max = var.common_data_source == "http" ? var.common_http_port_max : null
-#   boot_order    = var.vm_boot_order
 #   boot_wait     = var.vm_boot_wait
 #   boot_command = [
 #     "<up>",
@@ -270,8 +248,6 @@ source "vmware-iso" "linux-rhel-minimal" {
 #     " fips=1 inst.text selinux=1 enforcing=1 audit=1 ${local.data_source_command}",
 #     "<enter><wait><leftCtrlOn>x<leftCtrlOff>"
 #   ]
-#   ip_wait_timeout   = var.common_ip_wait_timeout
-#   ip_settle_timeout = var.common_ip_settle_timeout
 #   shutdown_command  = "sudo -S -E shutdown -P now"
 #   shutdown_timeout  = var.common_shutdown_timeout
 
@@ -291,41 +267,32 @@ source "vmware-iso" "linux-rhel-minimal" {
 source "vmware-iso" "linux-rhel-rke2" {
 
   // Virtual Machine Settings
-  vm_name              = local.vm_name_ws
-  guest_os_type        = var.vm_guest_os_type
-  firmware             = var.vm_firmware
-  CPUs                 = var.vm_cpu_count
-  cpu_cores            = var.vm_cpu_cores
-  CPU_hot_plug         = var.vm_cpu_hot_add
-  RAM                  = var.vm_mem_size
-  RAM_hot_plug         = var.vm_mem_hot_add
-  cdrom_type           = var.vm_cdrom_type
-  disk_controller_type = var.vm_disk_controller_type
-  storage {
-    disk_size             = var.vm_disk_size_rke2
-    disk_thin_provisioned = var.vm_disk_thin_provisioned
-  }
-  network_adapters {
-    network      = var.vsphere_network
-    network_card = var.vm_network_card
-  }
-  vm_version           = var.common_vm_version
-  remove_cdrom         = var.common_remove_cdrom
-  reattach_cdroms      = var.vm_cdrom_count
-  tools_upgrade_policy = var.common_tools_upgrade_policy
-  notes                = local.build_description
+  vm_name            = local.vm_name_ws
+  guest_os_type      = var.vm_guest_os_type
+  firmware           = var.vm_firmware
+  cpus               = var.vm_cpu_count
+  cores              = var.vm_cpu_cores
+  CPU_hot_plug       = var.vm_cpu_hot_add
+  memory             = var.vm_mem_size
+  cdrom_adapter_type = var.vm_cdrom_type
+  disk_adapter_type  = var.vm_disk_adapter_type
+  disk_size          = var.vm_disk_size_rke2
+  disk_type_id       = var.vm_disk_type_id
+
+  network              = var.vmw_network
+  network_adapter_type = var.vm_network_card
+  version              = var.common_vm_version
 
   // Removable Media Settings
-  iso_paths    = local.iso_paths
+  iso_url      = local.iso_path
+  iso_checksum = local.iso_checksum
   http_content = var.common_data_source == "http" ? local.data_source_content_ws : null
   cd_content   = var.common_data_source == "disk" ? local.data_source_content_ws : null
 
   # Boot and Provisioning Settings
   # [STIG-ID V-257777] [NIST SC-13] Secure boot with FIPS, SELinux, and audit
-  http_ip       = var.common_data_source == "http" ? var.common_http_ip : null
   http_port_min = var.common_data_source == "http" ? var.common_http_port_min : null
   http_port_max = var.common_data_source == "http" ? var.common_http_port_max : null
-  boot_order    = var.vm_boot_order
   boot_wait     = var.vm_boot_wait
   boot_command = [
     "<up>",
@@ -336,10 +303,8 @@ source "vmware-iso" "linux-rhel-rke2" {
     " fips=1 inst.text selinux=1 enforcing=1 audit=1 ${local.data_source_command}",
     "<enter><wait><leftCtrlOn>x<leftCtrlOff>"
   ]
-  ip_wait_timeout   = var.common_ip_wait_timeout
-  ip_settle_timeout = var.common_ip_settle_timeout
-  shutdown_command  = "sudo -S -E shutdown -P now"
-  shutdown_timeout  = var.common_shutdown_timeout
+  shutdown_command = "sudo -S -E shutdown -P now"
+  shutdown_timeout = var.common_shutdown_timeout
 
   # Communicator Settings and Credentials
   # [STIG-ID V-257842] [NIST IA-5] SSH key-based authentication
@@ -432,16 +397,10 @@ build {
       vm_cpu_cores             = var.vm_cpu_cores
       vm_cpu_count             = var.vm_cpu_count
       vm_disk_size             = var.vm_disk_size
-      vm_disk_thin_provisioned = var.vm_disk_thin_provisioned
       vm_firmware              = var.vm_firmware
       vm_guest_os_type         = var.vm_guest_os_type
       vm_mem_size              = var.vm_mem_size
       vm_network_card          = var.vm_network_card
-      vsphere_cluster          = var.vsphere_cluster
-      vsphere_datacenter       = var.vsphere_datacenter
-      vsphere_datastore        = var.vsphere_datastore
-      vsphere_endpoint         = var.vsphere_server
-      vsphere_folder           = var.vsphere_folder
       # Compliance metadata
       stig_profile        = "xccdf_org.ssgproject.content_profile_stig"
       fips_mode           = "enabled"

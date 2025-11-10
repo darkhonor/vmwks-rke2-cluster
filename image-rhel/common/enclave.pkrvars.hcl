@@ -15,7 +15,7 @@ vault_secrets_mount = "local-kv"
 vault_ansible_path  = "ansible"
 vault_build_path    = "packer-build"
 
-vm_network_device = "ens192"
-enclave_ntp_fqdn = "time.nist.gov"
+vm_network_device       = "ens192"
+enclave_ntp_fqdn        = "time.nist.gov"
 enclave_log_server_fqdn = "logserver.example.com"
 enclave_log_server_port = 514

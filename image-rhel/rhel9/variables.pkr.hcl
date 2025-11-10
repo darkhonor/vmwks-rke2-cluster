@@ -84,21 +84,9 @@ variable "vm_cpu_cores" {
   description = "The number of virtual CPUs cores per socket."
 }
 
-variable "vm_cpu_hot_add" {
-  type        = bool
-  description = "Enable hot add CPU."
-  default     = false
-}
-
 variable "vm_mem_size" {
   type        = number
   description = "The size for the virtual memory in MB."
-}
-
-variable "vm_mem_hot_add" {
-  type        = bool
-  description = "Enable hot add memory."
-  default     = false
 }
 
 variable "vm_disk_size" {
@@ -116,16 +104,21 @@ variable "vm_disk_size_rke2" {
   description = "The size for the virtual disk in MB for RKE2 Servers."
 }
 
-variable "vm_disk_controller_type" {
-  type        = list(string)
+variable "vm_disk_adapter_type" {
+  type        = string
   description = "The virtual disk controller types in sequence."
-  default     = ["pvscsi"]
+  default     = "nvme"
 }
 
-variable "vm_disk_thin_provisioned" {
-  type        = bool
-  description = "Thin provision the virtual disk."
-  default     = true
+variable "vm_disk_type_id" {
+  type        = number
+  description = "The type of virtual disk to create."
+  default     = 0
+}
+
+variable "vmw_network" {
+  type        = string
+  description = "The network which the virtual machine will connect for local desktop hypervisors. Use the generic values that map to a device, such as hostonly, nat, or bridged."
 }
 
 variable "vm_network_card" {
@@ -137,18 +130,6 @@ variable "vm_network_card" {
 variable "common_vm_version" {
   type        = number
   description = "The vSphere virtual hardware version."
-}
-
-variable "common_tools_upgrade_policy" {
-  type        = bool
-  description = "Upgrade VMware Tools on reboot."
-  default     = true
-}
-
-variable "common_remove_cdrom" {
-  type        = bool
-  description = "Remove the virtual CD-ROM(s)."
-  default     = true
 }
 
 variable "vm_enable_3d" {
@@ -183,17 +164,22 @@ variable "iso_file" {
   description = "The file name of the guest operating system ISO."
 }
 
+variable "iso_checksum_type" {
+  type        = string
+  description = "The checksum type of the guest operating system ISO."
+  default     = "sha256"
+}
+
+variable "iso_checksum_value" {
+  type        = string
+  description = "The checksum value of the guest operating system ISO."
+}
+
 // Boot Settings
 
 variable "common_data_source" {
   type        = string
   description = "The provisioning data source. One of `http` or `disk`."
-}
-
-variable "common_http_ip" {
-  type        = string
-  description = "Define an IP address on the host to use for the HTTP server."
-  default     = null
 }
 
 variable "common_http_port_min" {
@@ -206,26 +192,9 @@ variable "common_http_port_max" {
   description = "The end of the HTTP port range."
 }
 
-variable "vm_boot_order" {
-  type        = string
-  description = "The boot order for virtual machines devices."
-  default     = "disk,cdrom"
-}
-
 variable "vm_boot_wait" {
   type        = string
   description = "The time to wait before boot."
-}
-
-variable "common_ip_wait_timeout" {
-  type        = string
-  description = "Time to wait for guest operating system IP address response."
-}
-
-variable "common_ip_settle_timeout" {
-  type        = string
-  description = "Time to wait for guest operating system IP to settle down."
-  default     = "5s"
 }
 
 variable "common_shutdown_timeout" {
