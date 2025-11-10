@@ -285,21 +285,3 @@ variable "ansible_private_key" {
   description = "The private key file for Ansible to login to the guest operating system."
   sensitive   = true
 }
-
-variable "kv_secrets_mount" {
-  type        = string
-  description = "The mount path for the KV secrets engine in Vault."
-  default     = "local-kv"
-}
-
-variable "kv_ansible_path" {
-  type        = string
-  description = "The path to Ansible credentials in the KV secrets engine."
-  default     = "ansible"
-}
-
-variable "kv_build_path" {
-  type        = string
-  description = "The path to Build account credentials in the KV secrets engine."
-  default     = "packer-build"
-}

@@ -38,6 +38,24 @@ variable "vault_skip_verify" {
   default     = false
 }
 
+variable "kv_secrets_mount" {
+  type        = string
+  description = "The mount path for the KV secrets engine in Vault."
+  default     = "local-kv"
+}
+
+variable "kv_ansible_path" {
+  type        = string
+  description = "The path to Ansible credentials in the KV secrets engine."
+  default     = "ansible"
+}
+
+variable "kv_build_path" {
+  type        = string
+  description = "The path to Build account credentials in the KV secrets engine."
+  default     = "packer-build"
+}
+
 # [STIG-ID V-257842] [NIST IA-5] Ansible Service Account Credentials
 local "ansible_username" {
   expression = vault("${kv_secrets_mount}/data/${kv_ansible_path}", "username")

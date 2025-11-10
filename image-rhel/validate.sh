@@ -27,7 +27,6 @@ fi
 
 # Validate Packer configuration
 echo "[2/3] Validating Packer configuration..."
-echo "Debug: VAULT_ADDR = ${VAULT_ADDR}"
 packer validate \
     -var "vault_address=${VAULT_ADDR:-https://localhost:8200}" \
     -var-file=./common/enclave.pkrvars.hcl \
