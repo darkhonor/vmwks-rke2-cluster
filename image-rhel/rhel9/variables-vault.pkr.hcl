@@ -56,29 +56,56 @@ variable "vault_build_path" {
   default     = "packer-build"
 }
 
+# # [STIG-ID V-257842] [NIST IA-5] Ansible Service Account Credentials
+# local "ansible_username" {
+#   expression = vault("${vault_secrets_mount}/data/${vault_ansible_path}", "username")
+#   sensitive  = true
+# }
+
+# local "ansible_realname" {
+#   expression = vault("${vault_secrets_mount}/data/${vault_ansible_path}", "realname")
+#   sensitive  = true
+# }
+
+# local "ansible_ssh_key" {
+#   expression = vault("${vault_secrets_mount}/data/${vault_ansible_path}", "ssh_public_key")
+#   sensitive  = true
+# }
+
+# # [STIG-ID V-257842] Build Account Credentials (if needed for post-install)
+# local "build_username" {
+#   expression = vault("${vault_secrets_mount}/data/${vault_build_path}", "username")
+#   sensitive  = true
+# }
+
+# local "build_password_encrypted" {
+#   expression = vault("${vault_secrets_mount}/data/${vault_build_path}", "encrypted_password")
+#   sensitive  = true
+# }
+
 # [STIG-ID V-257842] [NIST IA-5] Ansible Service Account Credentials
 local "ansible_username" {
-  expression = vault("${vault_secrets_mount}/data/${vault_ansible_path}", "username")
+  expression = vault("local-kv/data/ansible", "username")
   sensitive  = true
 }
 
 local "ansible_realname" {
-  expression = vault("${vault_secrets_mount}/data/${vault_ansible_path}", "realname")
+  expression = vault("local-kv/data/ansible", "realname")
   sensitive  = true
 }
 
 local "ansible_ssh_key" {
-  expression = vault("${vault_secrets_mount}/data/${vault_ansible_path}", "ssh_public_key")
+  expression = vault("local-kv/data/ansible", "ssh_public_key")
   sensitive  = true
 }
 
 # [STIG-ID V-257842] Build Account Credentials (if needed for post-install)
 local "build_username" {
-  expression = vault("${vault_secrets_mount}/data/${vault_build_path}", "username")
+  expression = vault("local-kv/data/packer-build", "username")
   sensitive  = true
 }
 
 local "build_password_encrypted" {
-  expression = vault("${vault_secrets_mount}/data/${vault_build_path}", "encrypted_password")
+  expression = vault("local-kv/data/packer-build", "encrypted_password")
   sensitive  = true
 }
