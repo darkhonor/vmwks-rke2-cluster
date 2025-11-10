@@ -285,3 +285,18 @@ variable "ansible_private_key" {
   description = "The private key file for Ansible to login to the guest operating system."
   sensitive   = true
 }
+
+variable "enclave_ntp_fqdn" {
+  type        = string
+  description = "The NTP FQDN for the enclave."
+}
+
+variable "enclave_log_server_fqdn" {
+  type        = string
+  description = "The Log Server FQDN for the enclave."
+}
+
+variable "enclave_log_server_port" {
+  type        = number
+  description = "The Log Server port for the enclave."
+}

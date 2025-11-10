@@ -35,8 +35,6 @@ rootpw --lock
 ### [STIG-ID V-257842] [NIST IA-5] Authenticator management
 user --name=${ansible_username} --lock --groups=wheel
 sshkey --username=${ansible_username} "${ansible_key}"
-user --name=${nessus_username} --lock --groups=wheel
-sshkey --username=${nessus_username} "${nessus_key}"
 
 ### Configure firewall settings for the system.
 ### [STIG-ID V-257780] [NIST SC-7] Boundary Protection
@@ -152,9 +150,7 @@ dnf install -y ${additional_packages}
 # [STIG-ID V-257842] Configure sudo for service accounts
 echo "[2/11] Configuring sudo access..."
 echo "${ansible_username} ALL=(ALL) ALL" &gt; /etc/sudoers.d/${ansible_username}
-echo "${nessus_username} ALL=(ALL) ALL" &gt; /etc/sudoers.d/${nessus_username}
 chmod 0440 /etc/sudoers.d/${ansible_username}
-chmod 0440 /etc/sudoers.d/${nessus_username}
 
 # [STIG-ID V-257849] [NIST CM-3] Initialize AIDE database
 echo "[3/11] Initializing AIDE database (this may take 10-15 minutes)..."

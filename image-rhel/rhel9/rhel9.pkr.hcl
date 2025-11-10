@@ -102,6 +102,9 @@ locals {
         partitions = var.vm_disk_partitions
         lvm        = var.vm_disk_lvm
       })
+      enclave-ntp-fqdn = var.enclave_ntp_fqdn
+      enclave-log-server-fqdn = var.enclave_log_server_fqdn
+      enclave-log-server-port = var.enclave_log_server_port
       additional_packages = join(" ", var.additional_packages)
     })
   }
@@ -126,6 +129,9 @@ locals {
         partitions = var.vm_disk_partitions
         lvm        = var.vm_disk_lvm_rke2
       })
+      enclave-ntp-fqdn = var.enclave_ntp_fqdn
+      enclave-log-server-fqdn = var.enclave_log_server_fqdn
+      enclave-log-server-port = var.enclave_log_server_port
       additional_packages = join(" ", var.additional_packages)
     })
   }
