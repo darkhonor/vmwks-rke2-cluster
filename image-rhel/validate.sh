@@ -13,7 +13,7 @@ echo "================================================================"
 
 # Validate Vault connectivity
 echo "[1/3] Validating Vault connectivity..."
-if [[ -z "${VAULT_ADDR:-}" ]]; then
+if [ -z "${VAULT_ADDR:-}" ]; then
     echo "⚠️  WARNING: VAULT_ADDR not set"
     echo "   Set: export VAULT_ADDR=https://localhost:8200"
 else
@@ -27,6 +27,7 @@ fi
 
 # Validate Packer configuration
 echo "[2/3] Validating Packer configuration..."
+echo "Debug: VAULT_ADDR = ${VAULT_ADDR}"
 packer validate \
     -var "vault_address=${VAULT_ADDR:-https://localhost:8200}" \
     -var-file=./common/enclave.pkrvars.hcl \

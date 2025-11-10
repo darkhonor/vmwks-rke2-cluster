@@ -36,7 +36,13 @@ chmod 755 scap-results
 # Uncomment on Internet-connected systems
 # echo "[3/3] Initializing Packer plugins..."
 # packer init -upgrade $SCRIPT_PATH/rhel8
-# packer init -upgrade $SCRIPT_PATH/rhel9
+packer init -upgrade \
+    -var "vault_address=${VAULT_ADDR:-https://localhost:8200}" \
+    -var-file=./common/enclave.pkrvars.hcl \
+    -var-file=./common/common.pkrvars.hcl \
+    -var-file=./common/linux-storage.pkrvars.hcl \
+    -var-file=./common/network.pkrvars.hcl \
+    ./rhel9
 
 echo ""
 echo "✅ Initialization complete!"

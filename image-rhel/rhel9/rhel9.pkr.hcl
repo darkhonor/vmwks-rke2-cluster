@@ -216,71 +216,71 @@ source "vsphere-iso" "linux-rhel-minimal" {
   ssh_timeout          = var.communicator_timeout
 }
 
-source "vsphere-iso" "linux-rhel-ws" {
+# source "vsphere-iso" "linux-rhel-ws" {
 
-  // Virtual Machine Settings
-  vm_name              = local.vm_name_ws
-  guest_os_type        = var.vm_guest_os_type
-  firmware             = var.vm_firmware
-  CPUs                 = var.vm_cpu_count
-  cpu_cores            = var.vm_cpu_cores
-  CPU_hot_plug         = var.vm_cpu_hot_add
-  RAM                  = var.vm_mem_size
-  RAM_hot_plug         = var.vm_mem_hot_add
-  cdrom_type           = var.vm_cdrom_type
-  disk_controller_type = var.vm_disk_controller_type
-  storage {
-    disk_size             = var.vm_disk_size
-    disk_thin_provisioned = var.vm_disk_thin_provisioned
-  }
-  network_adapters {
-    network      = var.vsphere_network
-    network_card = var.vm_network_card
-  }
-  vm_version           = var.common_vm_version
-  remove_cdrom         = var.common_remove_cdrom
-  reattach_cdroms      = var.vm_cdrom_count
-  tools_upgrade_policy = var.common_tools_upgrade_policy
-  notes                = local.build_description
+#   // Virtual Machine Settings
+#   vm_name              = local.vm_name_ws
+#   guest_os_type        = var.vm_guest_os_type
+#   firmware             = var.vm_firmware
+#   CPUs                 = var.vm_cpu_count
+#   cpu_cores            = var.vm_cpu_cores
+#   CPU_hot_plug         = var.vm_cpu_hot_add
+#   RAM                  = var.vm_mem_size
+#   RAM_hot_plug         = var.vm_mem_hot_add
+#   cdrom_type           = var.vm_cdrom_type
+#   disk_controller_type = var.vm_disk_controller_type
+#   storage {
+#     disk_size             = var.vm_disk_size
+#     disk_thin_provisioned = var.vm_disk_thin_provisioned
+#   }
+#   network_adapters {
+#     network      = var.vsphere_network
+#     network_card = var.vm_network_card
+#   }
+#   vm_version           = var.common_vm_version
+#   remove_cdrom         = var.common_remove_cdrom
+#   reattach_cdroms      = var.vm_cdrom_count
+#   tools_upgrade_policy = var.common_tools_upgrade_policy
+#   notes                = local.build_description
 
-  // Removable Media Settings
-  iso_paths    = local.iso_paths
-  http_content = var.common_data_source == "http" ? local.data_source_content_ws : null
-  cd_content   = var.common_data_source == "disk" ? local.data_source_content_ws : null
+#   // Removable Media Settings
+#   iso_paths    = local.iso_paths
+#   http_content = var.common_data_source == "http" ? local.data_source_content_ws : null
+#   cd_content   = var.common_data_source == "disk" ? local.data_source_content_ws : null
 
-  # Boot and Provisioning Settings
-  # [STIG-ID V-257777] [NIST SC-13] Secure boot with FIPS, SELinux, and audit
-  http_ip       = var.common_data_source == "http" ? var.common_http_ip : null
-  http_port_min = var.common_data_source == "http" ? var.common_http_port_min : null
-  http_port_max = var.common_data_source == "http" ? var.common_http_port_max : null
-  boot_order    = var.vm_boot_order
-  boot_wait     = var.vm_boot_wait
-  boot_command = [
-    "<up>",
-    "e",
-    "<down><down><end><wait>",
-    # Enable FIPS mode, SELinux enforcing, and audit logging
-    # Remove inst.sshd to prevent SSH access during installation
-    " fips=1 inst.text selinux=1 enforcing=1 audit=1 ${local.data_source_command}",
-    "<enter><wait><leftCtrlOn>x<leftCtrlOff>"
-  ]
-  ip_wait_timeout   = var.common_ip_wait_timeout
-  ip_settle_timeout = var.common_ip_settle_timeout
-  shutdown_command  = "sudo -S -E shutdown -P now"
-  shutdown_timeout  = var.common_shutdown_timeout
+#   # Boot and Provisioning Settings
+#   # [STIG-ID V-257777] [NIST SC-13] Secure boot with FIPS, SELinux, and audit
+#   http_ip       = var.common_data_source == "http" ? var.common_http_ip : null
+#   http_port_min = var.common_data_source == "http" ? var.common_http_port_min : null
+#   http_port_max = var.common_data_source == "http" ? var.common_http_port_max : null
+#   boot_order    = var.vm_boot_order
+#   boot_wait     = var.vm_boot_wait
+#   boot_command = [
+#     "<up>",
+#     "e",
+#     "<down><down><end><wait>",
+#     # Enable FIPS mode, SELinux enforcing, and audit logging
+#     # Remove inst.sshd to prevent SSH access during installation
+#     " fips=1 inst.text selinux=1 enforcing=1 audit=1 ${local.data_source_command}",
+#     "<enter><wait><leftCtrlOn>x<leftCtrlOff>"
+#   ]
+#   ip_wait_timeout   = var.common_ip_wait_timeout
+#   ip_settle_timeout = var.common_ip_settle_timeout
+#   shutdown_command  = "sudo -S -E shutdown -P now"
+#   shutdown_timeout  = var.common_shutdown_timeout
 
-  # Communicator Settings and Credentials
-  # [STIG-ID V-257842] [NIST IA-5] SSH key-based authentication
-  communicator         = "ssh"
-  ssh_proxy_host       = var.communicator_proxy_host
-  ssh_proxy_port       = var.communicator_proxy_port
-  ssh_proxy_username   = var.communicator_proxy_username
-  ssh_proxy_password   = var.communicator_proxy_password
-  ssh_username         = local.ansible_username
-  ssh_private_key_file = var.ansible_private_key
-  ssh_port             = var.communicator_port
-  ssh_timeout          = var.communicator_timeout
-}
+#   # Communicator Settings and Credentials
+#   # [STIG-ID V-257842] [NIST IA-5] SSH key-based authentication
+#   communicator         = "ssh"
+#   ssh_proxy_host       = var.communicator_proxy_host
+#   ssh_proxy_port       = var.communicator_proxy_port
+#   ssh_proxy_username   = var.communicator_proxy_username
+#   ssh_proxy_password   = var.communicator_proxy_password
+#   ssh_username         = local.ansible_username
+#   ssh_private_key_file = var.ansible_private_key
+#   ssh_port             = var.communicator_port
+#   ssh_timeout          = var.communicator_timeout
+# }
 
 source "vsphere-iso" "linux-rhel-rke2" {
 

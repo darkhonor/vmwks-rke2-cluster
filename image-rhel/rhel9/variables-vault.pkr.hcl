@@ -24,11 +24,11 @@
 variable "vault_address" {
   type        = string
   description = "External Vault cluster address for secrets management"
-  default     = "https://vault.kten.mil"
+  default     = "https://localhost:8200"
 
   validation {
     condition     = can(regex("^https://", var.vault_address))
-    error_message = "[STIG-ID V-257777] Vault address must use HTTPS protocol for FIPS 140-3 compliance"
+    error_message = "[STIG-ID V-257777] The Vault address must use the HTTPS protocol for FIPS 140-3 compliance."
   }
 }
 
@@ -38,56 +38,47 @@ variable "vault_skip_verify" {
   default     = false
 }
 
-# [STIG-ID V-257777] [NIST SC-12] vSphere Credentials from Vault
-local "vsphere_username" {
-  expression = vault("SysAd/data/VMware", "terraform_username")
-  sensitive  = true
+variable "kv_secrets_mount" {
+  type        = string
+  description = "The mount path for the KV secrets engine in Vault."
+  default     = "local-kv"
 }
 
-local "vsphere_password" {
-  expression = vault("SysAd/data/VMware", "terraform_password")
-  sensitive  = true
+variable "kv_ansible_path" {
+  type        = string
+  description = "The path to Ansible credentials in the KV secrets engine."
+  default     = "ansible"
+}
+
+variable "kv_build_path" {
+  type        = string
+  description = "The path to Build account credentials in the KV secrets engine."
+  default     = "packer-build"
 }
 
 # [STIG-ID V-257842] [NIST IA-5] Ansible Service Account Credentials
 local "ansible_username" {
-  expression = vault("SysAd/data/ansible", "username")
+  expression = vault("${kv_secrets_mount}/data/${kv_ansible_path}", "username")
   sensitive  = true
 }
 
 local "ansible_realname" {
-  expression = vault("SysAd/data/ansible", "realname")
+  expression = vault("${kv_secrets_mount}/data/${kv_ansible_path}", "realname")
   sensitive  = true
 }
 
 local "ansible_ssh_key" {
-  expression = vault("SysAd/data/ansible", "ssh_public_key")
-  sensitive  = true
-}
-
-# [STIG-ID V-257842] [NIST IA-5] Nessus (ACAS) Service Account Credentials
-local "nessus_username" {
-  expression = vault("SysAd/data/nessus", "username")
-  sensitive  = true
-}
-
-local "nessus_realname" {
-  expression = vault("SysAd/data/nessus", "realname")
-  sensitive  = true
-}
-
-local "nessus_ssh_key" {
-  expression = vault("SysAd/data/nessus", "ssh_public_key")
+  expression = vault("${kv_secrets_mount}/data/${kv_ansible_path}", "ssh_public_key")
   sensitive  = true
 }
 
 # [STIG-ID V-257842] Build Account Credentials (if needed for post-install)
 local "build_username" {
-  expression = vault("SysAd/data/packer-build", "username")
+  expression = vault("${kv_secrets_mount}/data/${kv_build_path}", "username")
   sensitive  = true
 }
 
 local "build_password_encrypted" {
-  expression = vault("SysAd/data/packer-build", "encrypted_password")
+  expression = vault("${kv_secrets_mount}/data/${kv_build_path}", "encrypted_password")
   sensitive  = true
 }
