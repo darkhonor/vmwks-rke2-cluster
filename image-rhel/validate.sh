@@ -47,6 +47,7 @@ fi
 echo "[3/3] Validating Ansible playbooks..."
 ansible-playbook --syntax-check rhel9-baseline.yml
 ansible-playbook --syntax-check rhel9-ws.yml
+ansible-playbook --syntax-check rhel9-rke2-baseline.yml
 
 echo ""
 echo "✅ All validations passed!"

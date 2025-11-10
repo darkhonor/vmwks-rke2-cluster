@@ -43,14 +43,6 @@
       dns_server_2: 192.168.51.65   # Role isn't smart enough to only include those that are here
       search_domain: kten.test
 
-    # [STIG-ID V-257780] Configure internal repositories
-    - role: assign_repo
-      repo_server: garden.kten.test
-      rhel9_baseos_repo_path: rhel-9-for-x86_64-baseos-rpms
-      rhel9_appstream_repo_path: rhel-9-for-x86_64-appstream-rpms
-      ca_pem_path: https://garden.kten.test/certs/ceist-ca.crt
-      web_protocol: https
-
     # [STIG-ID V-257780] System base configuration
     - role: system_base
       connected_network: false    # Required to ensure nothing tries to access the Internet
