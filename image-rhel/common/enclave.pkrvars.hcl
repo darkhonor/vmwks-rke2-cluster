@@ -9,7 +9,7 @@ iso_path = "/mnt/e/iso"
 #iso_web_path = ""
 
 // Ansible Credentials
-ansible_private_key = "~/.ssh/id_aackerman-2024.key"
+ansible_private_key = "~/.ssh/sosi_ansible.key"
 
 vault_secrets_mount = "local-kv"
 vault_ansible_path  = "ansible"

@@ -16,6 +16,7 @@ echo "[1/3] Validating Vault connectivity..."
 if [ -z "${VAULT_ADDR:-}" ]; then
     echo "⚠️  WARNING: VAULT_ADDR not set"
     echo "   Set: export VAULT_ADDR=https://localhost:8200"
+    exit 1
 else
     if vault status >/dev/null 2>&1; then
         echo "✅ Vault connectivity validated"
