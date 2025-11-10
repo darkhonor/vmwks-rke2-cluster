@@ -15,12 +15,6 @@ common_vm_version           = 19
 common_tools_upgrade_policy = true
 common_remove_cdrom         = true
 
-// Template and Content Library Settings
-common_template_conversion         = true
-common_content_library_ovf         = false
-common_content_library_destroy     = true
-common_content_library_skip_export = false
-
 // OVF Export Settings
 common_ovf_export_enabled   = false
 common_ovf_export_overwrite = true

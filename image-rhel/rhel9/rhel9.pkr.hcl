@@ -150,7 +150,7 @@ locals {
 //  BLOCK: source
 //  Defines the builder configuration blocks.
 
-source "vsphere-iso" "linux-rhel-minimal" {
+source "vmware-iso" "linux-rhel-minimal" {
 
   // Virtual Machine Settings
   vm_name              = local.vm_name_min
@@ -216,7 +216,7 @@ source "vsphere-iso" "linux-rhel-minimal" {
   ssh_timeout          = var.communicator_timeout
 }
 
-# source "vsphere-iso" "linux-rhel-ws" {
+# source "vmware-iso" "linux-rhel-ws" {
 
 #   // Virtual Machine Settings
 #   vm_name              = local.vm_name_ws
@@ -282,7 +282,7 @@ source "vsphere-iso" "linux-rhel-minimal" {
 #   ssh_timeout          = var.communicator_timeout
 # }
 
-source "vsphere-iso" "linux-rhel-rke2" {
+source "vmware-iso" "linux-rhel-rke2" {
 
   // Virtual Machine Settings
   vm_name              = local.vm_name_ws
@@ -353,9 +353,9 @@ source "vsphere-iso" "linux-rhel-rke2" {
 
 build {
   sources = [
-    "source.vsphere-iso.linux-rhel-minimal",
-    # "source.vsphere-iso.linux-rhel-ws",
-    # "source.vsphere-iso.linux-rhel-rke2",
+    "source.vmware-iso.linux-rhel-minimal",
+    # "source.vmware-iso.linux-rhel-ws",
+    # "source.vmware-iso.linux-rhel-rke2",
   ]
 
   # [STIG-ID V-257849] Post-SCAP Ansible configuration

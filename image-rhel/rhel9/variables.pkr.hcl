@@ -4,88 +4,11 @@
 /*
     DESCRIPTION:
     Red Hat Enterprise Linux 9 input variables.
-    Packer Plugin for VMware vSphere: 'vsphere-iso' builder.
+    Packer Plugin for VMware: 'vsphere-iso' builder.
 */
 
 //  BLOCK: variable
 //  Defines the input variables.
-
-// vSphere Credentials
-
-variable "vsphere_server" {
-  type        = string
-  description = "The fully qualified domain name or IP address of the vCenter Server instance."
-}
-
-// variable "vsphere_username" {
-//   type        = string
-//   description = "The username to login to the vCenter Server instance."
-//   sensitive   = true
-// }
-
-// variable "vsphere_password" {
-//   type        = string
-//   description = "The password for the login to the vCenter Server instance."
-//   sensitive   = true
-// }
-
-variable "vsphere_insecure_connection" {
-  type        = bool
-  description = "Do not validate vCenter Server TLS certificate."
-}
-
-variable "vsphere_validate_certificate" {
-  type        = bool
-  description = "Whether to validate vCenter Server TLS certificate."
-}
-
-// vSphere Settings
-
-variable "vsphere_datacenter" {
-  type        = string
-  description = "The name of the target vSphere datacenter."
-  default     = ""
-}
-
-variable "vsphere_cluster" {
-  type        = string
-  description = "The name of the target vSphere cluster."
-  default     = ""
-}
-
-variable "vsphere_host" {
-  type        = string
-  description = "The name of the target ESXi host."
-  default     = ""
-}
-
-variable "vsphere_datastore" {
-  type        = string
-  description = "The name of the target vSphere datastore."
-}
-
-variable "vsphere_network" {
-  type        = string
-  description = "The name of the target vSphere network segment."
-}
-
-variable "vsphere_folder" {
-  type        = string
-  description = "The name of the target vSphere folder."
-  default     = ""
-}
-
-variable "vsphere_resource_pool" {
-  type        = string
-  description = "The name of the target vSphere resource pool."
-  default     = ""
-}
-
-variable "vsphere_set_host_for_datastore_uploads" {
-  type        = bool
-  description = "Set this to true if packer should use the host for uploading files to the datastore."
-  default     = false
-}
 
 // Virtual Machine Settings
 
@@ -234,38 +157,6 @@ variable "vm_enable_3d" {
   default     = false
 }
 
-// Template and Content Library Settings
-
-variable "common_template_conversion" {
-  type        = bool
-  description = "Convert the virtual machine to template. Must be 'false' for content library."
-  default     = false
-}
-
-variable "common_content_library_name" {
-  type        = string
-  description = "The name of the target vSphere content library, if used."
-  default     = null
-}
-
-variable "common_content_library_ovf" {
-  type        = bool
-  description = "Export to content library as an OVF template."
-  default     = true
-}
-
-variable "common_content_library_destroy" {
-  type        = bool
-  description = "Delete the virtual machine after exporting to the content library."
-  default     = true
-}
-
-variable "common_content_library_skip_export" {
-  type        = bool
-  description = "Skip exporting the virtual machine to the content library. Option allows for testing/debugging without saving the machine image."
-  default     = false
-}
-
 // OVF Export Settings
 
 variable "common_ovf_export_enabled" {
@@ -281,11 +172,6 @@ variable "common_ovf_export_overwrite" {
 }
 
 // Removable Media Settings
-
-variable "common_iso_datastore" {
-  type        = string
-  description = "The name of the source vSphere datastore for the guest operating system ISO."
-}
 
 variable "iso_path" {
   type        = string
@@ -349,30 +235,6 @@ variable "common_shutdown_timeout" {
 
 // Communicator Settings and Credentials
 
-// variable "build_username" {
-//   type        = string
-//   description = "The username to login to the guest operating system."
-//   sensitive   = true
-// }
-
-// variable "build_password" {
-//   type        = string
-//   description = "The password to login to the guest operating system."
-//   sensitive   = true
-// }
-
-// variable "build_password_encrypted" {
-//   type        = string
-//   description = "The SHA-512 encrypted password to login to the guest operating system."
-//   sensitive   = true
-// }
-
-// variable "build_key" {
-//   type        = string
-//   description = "The public key to login to the guest operating system."
-//   sensitive   = true
-// }
-
 variable "communicator_proxy_host" {
   type        = string
   description = "The proxy server to use for SSH connection. (Optional)"
@@ -408,27 +270,6 @@ variable "communicator_timeout" {
   description = "The timeout for the communicator protocol."
 }
 
-// Ansible Credentials
-
-// variable "ansible_username" {
-//   type        = string
-//   description = "The username for Ansible to login to the guest operating system."
-//   sensitive   = true
-// }
-
-// variable "ansible_key" {
-//   type        = string
-//   description = "The public key for Ansible to login to the guest operating system."
-//   sensitive   = true
-// }
-
-// HCP Packer Settings
-
-variable "common_hcp_packer_registry_enabled" {
-  type        = bool
-  description = "Enable the HCP Packer registry."
-  default     = false
-}
 // Additional Settings
 
 variable "additional_packages" {
@@ -445,9 +286,20 @@ variable "ansible_private_key" {
   sensitive   = true
 }
 
-// Nessus (ACAS) Service Account Credentials
-variable "nessus_private_key" {
+variable "kv_secrets_mount" {
   type        = string
-  description = "The private key file for Nessus to login to the guest operating system."
-  sensitive   = true
+  description = "The mount path for the KV secrets engine in Vault."
+  default     = "local-kv"
+}
+
+variable "kv_ansible_path" {
+  type        = string
+  description = "The path to Ansible credentials in the KV secrets engine."
+  default     = "ansible"
+}
+
+variable "kv_build_path" {
+  type        = string
+  description = "The path to Build account credentials in the KV secrets engine."
+  default     = "packer-build"
 }
