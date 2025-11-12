@@ -330,58 +330,58 @@ build {
   ]
 
   # [STIG-ID V-257849] Post-SCAP Ansible configuration
-  provisioner "ansible" {
-    only                   = ["vsphere-iso.linux-rhel-minimal"]
-    user                   = local.ansible_username
-    galaxy_file            = "${path.cwd}/roles/requirements.yml"
-    galaxy_force_with_deps = true
-    playbook_file          = "${path.cwd}/rhel9-baseline.yml"
-    roles_path             = "${path.cwd}/roles"
-    ansible_env_vars = [
-      "ANSIBLE_CONFIG=${path.cwd}/ansible.cfg",
-      "ANSIBLE_PYTHON_INTERPRETER=/usr/libexec/platform-python"
-    ]
-    extra_arguments = [
-      "--extra-vars",
-      "ansible_become_pass=''"
-    ]
-  }
+  # provisioner "ansible" {
+  #   only                   = ["vsphere-iso.linux-rhel-minimal"]
+  #   user                   = local.ansible_username
+  #   galaxy_file            = "${path.cwd}/roles/requirements.yml"
+  #   galaxy_force_with_deps = true
+  #   playbook_file          = "${path.cwd}/rhel9-baseline.yml"
+  #   roles_path             = "${path.cwd}/roles"
+  #   ansible_env_vars = [
+  #     "ANSIBLE_CONFIG=${path.cwd}/ansible.cfg",
+  #     "ANSIBLE_PYTHON_INTERPRETER=/usr/libexec/platform-python"
+  #   ]
+  #   extra_arguments = [
+  #     "--extra-vars",
+  #     "ansible_become_pass=''"
+  #   ]
+  # }
 
-  # [STIG-ID V-257849] Post-SCAP Ansible configuration
-  provisioner "ansible" {
-    only                   = ["vsphere-iso.linux-rhel-ws"]
-    user                   = local.ansible_username
-    galaxy_file            = "${path.cwd}/roles/requirements.yml"
-    galaxy_force_with_deps = true
-    playbook_file          = "${path.cwd}/rhel9-ws.yml"
-    roles_path             = "${path.cwd}/roles"
-    ansible_env_vars = [
-      "ANSIBLE_CONFIG=${path.cwd}/ansible.cfg",
-      "ANSIBLE_PYTHON_INTERPRETER=/usr/libexec/platform-python"
-    ]
-    extra_arguments = [
-      "--extra-vars",
-      "ansible_become_pass=''"
-    ]
-  }
+  # # [STIG-ID V-257849] Post-SCAP Ansible configuration
+  # provisioner "ansible" {
+  #   only                   = ["vsphere-iso.linux-rhel-ws"]
+  #   user                   = local.ansible_username
+  #   galaxy_file            = "${path.cwd}/roles/requirements.yml"
+  #   galaxy_force_with_deps = true
+  #   playbook_file          = "${path.cwd}/rhel9-ws.yml"
+  #   roles_path             = "${path.cwd}/roles"
+  #   ansible_env_vars = [
+  #     "ANSIBLE_CONFIG=${path.cwd}/ansible.cfg",
+  #     "ANSIBLE_PYTHON_INTERPRETER=/usr/libexec/platform-python"
+  #   ]
+  #   extra_arguments = [
+  #     "--extra-vars",
+  #     "ansible_become_pass=''"
+  #   ]
+  # }
 
-  # [STIG-ID V-257849] Post-SCAP Ansible configuration
-  provisioner "ansible" {
-    only                   = ["vsphere-iso.linux-rhel-rke2"]
-    user                   = local.ansible_username
-    galaxy_file            = "${path.cwd}/roles/requirements.yml"
-    galaxy_force_with_deps = true
-    playbook_file          = "${path.cwd}/rhel9-rke2-baseline.yml"
-    roles_path             = "${path.cwd}/roles"
-    ansible_env_vars = [
-      "ANSIBLE_CONFIG=${path.cwd}/ansible.cfg",
-      "ANSIBLE_PYTHON_INTERPRETER=/usr/libexec/platform-python"
-    ]
-    extra_arguments = [
-      "--extra-vars",
-      "ansible_become_pass=''"
-    ]
-  }
+  # # [STIG-ID V-257849] Post-SCAP Ansible configuration
+  # provisioner "ansible" {
+  #   only                   = ["vsphere-iso.linux-rhel-rke2"]
+  #   user                   = local.ansible_username
+  #   galaxy_file            = "${path.cwd}/roles/requirements.yml"
+  #   galaxy_force_with_deps = true
+  #   playbook_file          = "${path.cwd}/rhel9-rke2-baseline.yml"
+  #   roles_path             = "${path.cwd}/roles"
+  #   ansible_env_vars = [
+  #     "ANSIBLE_CONFIG=${path.cwd}/ansible.cfg",
+  #     "ANSIBLE_PYTHON_INTERPRETER=/usr/libexec/platform-python"
+  #   ]
+  #   extra_arguments = [
+  #     "--extra-vars",
+  #     "ansible_become_pass=''"
+  #   ]
+  # }
 
   # [STIG-ID V-257849] Build manifest with compliance metadata
   post-processor "manifest" {
